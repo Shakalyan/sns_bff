@@ -1,0 +1,58 @@
+body {
+    background: url("../img/background2.png");
+    background-size: 100vw 100vh;
+}
+
+.authorization_div {
+    background-color: #1f1934;
+    border-radius: 10px;
+    margin: 25vh auto;
+    width: 300px;
+    padding: 50px 30px 50px 30px;
+}
+
+.auth_main_header {
+    text-align: center;
+    margin: 0px 10px 10px 10px;
+    padding-top: 0px;
+    color: #fff;
+}
+
+.auth_subheader {
+    color: #fff;
+    margin-left: 10px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.auth_input {
+    display: block;
+    margin-left: 10px;
+    background-color: #3f1568;
+    color: #fff;
+    font-size: 20px;
+    border-width: 0px;
+    border-radius: 5px;
+}
+
+.auth_submit, .auth_test {
+    margin-left: 10px;
+    margin-top: 15px;
+    font-size: 20px;
+    color: #fff;
+    background-color: #3f1568;
+    border-width: 0px;
+    border-radius: 5px;
+    padding: 5px 10px 5px 10px;
+    font-weight: bold;
+    transition-duration: 0.2s;
+}
+
+.auth_submit:hover {
+    background-color: white;
+    color: #3f1568;
+}
+
+.auth_input_error {
+    margin: 0px 10px 0px 10px;
+}

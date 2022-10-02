@@ -6,8 +6,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class SnsBffApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(SnsBffApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(SnsBffApplication.class, args);
+    }
 
 }
