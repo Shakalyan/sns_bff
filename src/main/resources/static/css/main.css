@@ -1,9 +1,9 @@
 body {
-    margin: 0px 0px 0px 0px;
+    margin: 0 0 0 0;
 }
 
 .card {
-    margin: 0vh 10vw 0vh 10vw;
+    margin: 0 10vw 0 10vw;
     width: 80vw;
     height: 100vh;
     background-color: #130626;
@@ -18,8 +18,8 @@ body {
 }
 
 .logo {
-    margin-top: 0px;
-    margin-bottom: 0px;
+    margin-top: 0;
+    margin-bottom: 0;
     color: white;
     font-size: 50px;
     font-weight: bold;
@@ -47,7 +47,7 @@ body {
 }
 
 .main_container {
-    font-size: 0px;
+    font-size: 0;
     display: inline-block;
     vertical-align: top;
     horiz-align: left;
@@ -171,14 +171,11 @@ body {
 .album_card {
     width: 300px;
     height: 400px;
-    margin: 10px 0px 0px 10px;
+    margin: 10px 0 0 10px;
     display: inline-block;
 }
 
 .album_card:hover {
-    /*border-width: 3px;*/
-    /*border-color: #bf4cbf;*/
-    /*border-style: solid;*/
     outline: #6a308d solid 3px;
 }
 
@@ -192,7 +189,7 @@ body {
     font-size: 20px;
     font-weight: bold;
     color: white;
-    margin: 5px 0px 5px 0px;
+    margin: 5px 0 5px 0;
     text-align: center;
 }
 
@@ -216,5 +213,57 @@ body {
 }
 
 .album_follow_button:hover {
+    background-color: #6a308d;
+}
+
+
+/*PERFORMERS LIST*/
+
+.performer_card {
+    width: 300px;
+    height: 400px;
+    margin: 10px 0 0 10px;
+    display: inline-block;
+}
+
+.performer_card:hover {
+    outline: #6a308d solid 3px;
+}
+
+.performer_img {
+    width: 100%;
+    height: 300px;
+    border-radius: 50%;
+}
+
+.performer_description {
+    width: 100%;
+    font-size: 20px;
+    font-weight: bold;
+    color: white;
+    margin: 5px 0 5px 0;
+    text-align: center;
+}
+
+.performer_follow_button {
+    background-color: #130626;
+    border-width: 1px;
+    border-radius: 50%;
+    border-style: solid;
+    margin: auto auto;
+    width: 25px;
+    height: 25px;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+}
+
+.performer_follow_button > i {
+    color: white;
+    font-size: 15px;
+    margin: auto auto;
+}
+
+.performer_follow_button:hover {
     background-color: #6a308d;
 }
