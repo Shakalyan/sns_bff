@@ -1,0 +1,156 @@
+body {
+    margin: 0px 0px 0px 0px;
+}
+
+.card {
+    margin: 0vh 10vw 0vh 10vw;
+    width: 80vw;
+    height: 100vh;
+    background-color: #1f1934;
+
+}
+
+.nav_bar {
+    background-color: #130e24;
+    width: 20%;
+    height: 100%;
+    display: inline-block;
+}
+
+.logo {
+    margin-top: 0px;
+    margin-bottom: 0px;
+    color: white;
+    font-size: 50px;
+    font-weight: bold;
+    text-align: center;
+    background-color: #130e24;
+    height: 6%;
+}
+
+.nav_list {
+    list-style-type: none;
+}
+
+.nav_element {
+    display: block;
+    width: 100%;
+    font-size: 20px;
+    margin-top: 20px;
+    border: none;
+    background-color: #130e24;
+    color: white;
+}
+
+.nav_element:hover {
+    color: #bf4cbf;
+}
+
+.main_container {
+    font-size: 0px;
+    display: inline-block;
+    vertical-align: top;
+    horiz-align: left;
+    width: 80%;
+    height: 100%;
+}
+
+.search_panel {
+    width: 100%;
+    height: 6%;
+    background-color: #130e24;
+}
+
+.search_bar {
+    border-color: #6a308d;
+    border-style: solid;
+    border-radius: 10px;
+    border-width: 1px;
+    font-size: 20px;
+    color: white;
+    margin: 15px;
+    background-color: #130e24;
+}
+
+.content_container {
+    background-color: #130626;
+    height: 94%;
+}
+
+
+/* MUSIC LIST */
+
+
+.music_columns {
+    display: flex;
+    width: 100%;
+    height: 50px;
+}
+
+.column {
+    font-size: 20px;
+    color: white;
+    text-overflow: ellipsis;
+    display: flex;
+    white-space: nowrap;
+    overflow: hidden;
+    margin: auto 10px;
+}
+
+.c1 {
+    width: 7%;
+}
+
+.c2 {
+    width: 31%;
+}
+
+.music {
+    display: flex;
+    background-color: #130626;
+    width: 100%;
+    height: 50px;
+}
+
+.music:hover {
+    background-color: #3b176f;
+}
+
+.music_service_buttons {
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    margin: 10px 10px;
+}
+
+.music_button {
+    background-color: #130626;
+    border-width: 1px;
+    border-radius: 50%;
+    border-style: solid;
+    margin: auto auto;
+    width: 25px;
+    height: 25px;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+}
+
+.music_button > i {
+    color: white;
+    font-size: 15px;
+    margin: auto auto;
+}
+
+.music_button:hover {
+    background-color: #bf4cbf;
+}
+
+.music_text {
+    font-size: 20px;
+    color: white;
+    margin: auto 10px;
+}
+
+
+/* */

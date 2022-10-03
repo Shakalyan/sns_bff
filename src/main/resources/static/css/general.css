@@ -1,3 +1,8 @@
+body {
+    background: url("../img/background2.png");
+    background-size: 100vw 100vh;
+}
+
 .error {
     color: #d53d3d;
 }
