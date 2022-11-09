@@ -2,6 +2,7 @@
 
 const API_URLS = {
     host: "http://localhost:8080/",
+    main: "main",
     authentication: "api/authentication",
     registration: "api/registration"
 };
@@ -31,6 +32,7 @@ authView.submitButton.addEventListener("click", function() {
     response.then(function(resp) {
         if(resp.status == 200) {
             authView.errorField.textContent = "";
+            window.open(API_URLS.host + API_URLS.main, "_self")
         }
         else {
             authView.errorField.textContent = resp.data;

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="../static/css/authorization.css">
+    <link rel="stylesheet" href="../static/css/general.css">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/authorization.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/general.css}">
+    <title>SNS - Sign in</title>
+</head>
+<body>
+
+    <div class="authorization_div" id="auth_div">
+        <h1 class="auth_main_header">Sign in SNS</h1>
+        <h2 class="auth_subheader">Login</h2>
+        <input class="auth_input login" id="auth_login" type="text">
+        <h2 class="auth_subheader">Password</h2>
+        <input class="auth_input password" id="auth_password" type="password">
+        <p class="auth_input_error error" id="auth_error" ></p>
+        <button class="auth_submit" id="auth_submit_button" type="submit">Sign in</button>
+        <button class="auth_submit" id="auth_to_reg_button" type="submit">Sign up</button>
+    </div>
+
+    <div class="authorization_div hide" id="reg_div">
+        <h1 class="auth_main_header">Sign up in SNS</h1>
+        <h2 class="auth_subheader">Login</h2>
+        <input class="auth_input login" id="reg_login" type="text">
+        <h2 class="auth_subheader">Password</h2>
+        <input class="auth_input password" id="reg_password" type="password">
+        <h2 class="auth_subheader">Repeat password</h2>
+        <input class="auth_input password" id="reg_rep_password" type="password">
+        <p class="auth_input_error error" id="reg_error"></p>
+        <button class="auth_submit" id="reg_submit_button" type="submit">Sign up</button>
+        <button class="auth_submit" id="reg_to_auth_button" type="submit">Back</button>
+    </div>
+
+    <script src="../static/js/app.js"></script>
+    <script type="module" th:src="@{/js/app.js}"></script>
+
+</body>
+</html>
