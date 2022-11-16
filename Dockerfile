@@ -1,4 +1,5 @@
 FROM openjdk:17
-ADD /target/sns_bff-0.0.1-SNAPSHOT.jar /bff/bff.jar
+COPY . /bff/
 WORKDIR /bff/
-ENTRYPOINT ["java", "-jar", "bff.jar"]
+RUN ./mvnw package
+ENTRYPOINT ["java", "-jar", "target/sns_bff-0.0.1-SNAPSHOT.jar"]
