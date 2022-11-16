@@ -2,8 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="css/authorization.css">
-    <link rel="stylesheet" href="css/general.css">
+    <link rel="stylesheet" href="../static/css/authorization.css">
+    <link rel="stylesheet" href="../static/css/general.css">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/authorization.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/general.css}">
     <title>SNS - Sign in</title>
 </head>
 <body>
@@ -32,7 +34,9 @@
         <button class="auth_submit" id="reg_to_auth_button" type="submit">Back</button>
     </div>
 
-    <script src="js/app.js"></script>
+    <script src="../static/js/app.js"></script>
+    <script type="module" th:src="@{/js/app.js}"></script>
+    <script type="module" th:src="@{/js/api_utils.js}"></script>
 
 </body>
 </html>

@@ -1,7 +1,10 @@
 "use strict";
 
+import {sendQuery} from "./api_utils.js";
+
 const API_URLS = {
     host: "http://localhost:8080/",
+    main: "main",
     authentication: "api/authentication",
     registration: "api/registration"
 };
@@ -31,6 +34,7 @@ authView.submitButton.addEventListener("click", function() {
     response.then(function(resp) {
         if(resp.status == 200) {
             authView.errorField.textContent = "";
+            window.open(API_URLS.host + API_URLS.main, "_self")
         }
         else {
             authView.errorField.textContent = resp.data;
@@ -41,8 +45,11 @@ authView.submitButton.addEventListener("click", function() {
 });
 
 authView.toRegButton.addEventListener("click", function() {
-    hideElement(authView.card);
-    showElement(regView.card);
+    /*hideElement(authView.card);
+    showElement(regView.card);*/
+    sendQuery("http://192.168.106.35:5000/join", "GET").then((response) => {
+        console.log(response);
+    });
 });
 
 regView.submitButton.addEventListener("click", function() {
