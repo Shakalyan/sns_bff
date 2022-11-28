@@ -1,3 +1,16 @@
+
+
+const music_button = document.querySelector("#music_button");
+music_button.addEventListener("click", function() {
+    console.log("Start load");
+    let audio = new Audio("http://localhost:8080/ws.mp3");
+    audio.play().catch((er) => {
+        console.log(`error ${er}`);
+    });
+    console.log("End load");
+});
+
+
 const searchButtonsGroup = {
     song: document.querySelector("#search_button_song"),
     album: document.querySelector("#search_button_album"),
@@ -68,6 +81,7 @@ const player = {
 
 };
 
+/*
 player.songsList.push(new Song("vb",
                              "../../../../server/noize/new_album",
                                   "Вселенная бесконечна?", "Новый альбом", "Noize MC"));
@@ -78,6 +92,7 @@ player.songsList.push(new Song("ws",
 player.currentSongIndex = 1;
 player.checkSongIndex();
 player.loadSong();
+*/
 
 
 for(let key in searchButtonsGroup) {
@@ -123,4 +138,3 @@ player.audio.addEventListener("loadedmetadata", function () {
 player.audio.addEventListener("timeupdate", function() {
     player.progressBar.value = this.currentTime;
 });
-

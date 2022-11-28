@@ -1,35 +1,30 @@
 package com.sns.sns_bff.controller;
 
-import com.sns.sns_bff.dto.Response;
 import com.sns.sns_bff.model.User;
 import com.sns.sns_bff.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("api/")
+@RequestMapping("/api")
+@RequiredArgsConstructor
 public class AuthorizationController {
 
     private final UserService userService;
 
-    @Autowired
-    AuthorizationController(UserService userService) {
-        this.userService = userService;
+    @PostMapping("/authentication")
+    @ResponseBody
+    public ResponseEntity<String> authenticate(@RequestBody User user) {
+        String token = userService.authenticate(user.getLogin(), user.getPassword());
+        return ResponseEntity.ok(token);
     }
 
-    @PostMapping("authentication")
+    @PostMapping("/registration")
     @ResponseBody
-    public ResponseEntity authenticate(@RequestBody User user) {
-        Response response = userService.authenticate(user.getLogin(), user.getPassword());
-        return ResponseEntity.status(response.getStatus()).body(response);
-    }
-
-    @PostMapping("registration")
-    @ResponseBody
-    public ResponseEntity register(@RequestBody User user) {
-        Response response = userService.register(user);
-        return ResponseEntity.status(response.getStatus()).body(response);
+    public ResponseEntity<String> register(@RequestBody User user) {
+        userService.register(user);
+        return ResponseEntity.ok("User has been registered");
     }
 
 }

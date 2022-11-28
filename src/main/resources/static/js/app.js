@@ -1,6 +1,4 @@
-"use strict";
-
-import {sendQuery} from "./api_utils.js";
+import {sendJSONQuery} from "./api_utils.js";
 
 const API_URLS = {
     host: "http://localhost:8080/",
@@ -30,26 +28,24 @@ const regView = {
 
 authView.submitButton.addEventListener("click", function() {
     let user = new User(authView.loginField.value, authView.passwordField.value);
-    let response = sendRequest( API_URLS.host + API_URLS.authentication, "POST", JSON.stringify(user));
-    response.then(function(resp) {
-        if(resp.status == 200) {
-            authView.errorField.textContent = "";
-            window.open(API_URLS.host + API_URLS.main, "_self")
-        }
-        else {
-            authView.errorField.textContent = resp.data;
-        }
-    });
-
-    //window.location.replace("test");
+    sendJSONQuery( API_URLS.host + API_URLS.authentication, "POST", user)
+        .then((response) => {
+            console.log(response);
+            if(response.status === 200) {
+                authView.errorField.textContent = "";
+                window.open(API_URLS.host + API_URLS.main, "_self");
+            }
+            else {
+                response.text().then((text) => {
+                    authView.errorField.textContent = text;
+                })
+            }
+        })
 });
 
 authView.toRegButton.addEventListener("click", function() {
-    /*hideElement(authView.card);
-    showElement(regView.card);*/
-    sendQuery("http://192.168.106.35:5000/join", "GET").then((response) => {
-        console.log(response);
-    });
+    hideElement(authView.card);
+    showElement(regView.card);
 });
 
 regView.submitButton.addEventListener("click", function() {
@@ -57,25 +53,26 @@ regView.submitButton.addEventListener("click", function() {
     let password = regView.passwordField.value;
     let passwordRep = regView.repPasswordField.value;
 
-    if(password.toString() != passwordRep.toString()) {
+    if(password.toString() !== passwordRep.toString()) {
         regView.errorField.textContent = "Passwords do not match";
         return;
     }
 
     let user = new User(login, password);
-    const response = sendRequest(API_URLS.host + API_URLS.registration, "POST", JSON.stringify(user));
-    response.then(function(resp) {
-        if(resp.status == 200) {
-            regView.errorField.classList.remove("error");
-            regView.errorField.classList.add("success");
-        }
-        else {
-            regView.errorField.classList.remove("success");
-            regView.errorField.classList.add("error");
-        }
-        regView.errorField.textContent = resp.data;
-    });
-
+    sendJSONQuery(API_URLS.host + API_URLS.registration, "POST", user)
+        .then((response) => {
+            if(response.status === 200) {
+                regView.errorField.classList.remove("error");
+                regView.errorField.classList.add("success");
+            }
+            else {
+                regView.errorField.classList.remove("success");
+                regView.errorField.classList.add("error");
+            }
+            response.text().then((text) => {
+                regView.errorField.textContent = text;
+            })
+        })
 });
 
 regView.toAuthButton.addEventListener("click", function() {
@@ -86,17 +83,6 @@ regView.toAuthButton.addEventListener("click", function() {
 function User(login, password) {
     this.login = login;
     this.password = password;
-}
-
-async function sendRequest(url, requestMethod, requestBody) {
-    const response = await fetch(url, {
-                                    method: requestMethod,
-                                    headers: {
-                                        "Content-Type": "application/json"
-                                    },
-                                    body: requestBody
-                                });
-    return await response.json();
 }
 
 function showElement(element) {

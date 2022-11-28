@@ -1,11 +1,11 @@
 package com.sns.sns_bff.service;
 
-import com.sns.sns_bff.dto.Response;
+import com.sns.sns_bff.exception.AuthorizationException;
 import com.sns.sns_bff.model.User;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.List;
 
 @Service
 public class UserService {
@@ -21,23 +21,22 @@ public class UserService {
         allUsers.add(user2);
     }
 
-    public Response<String> authenticate(String login, String password) {
+    public String authenticate(String login, String password) throws AuthorizationException {
         for(var user : allUsers) {
             if(user.getLogin().equals(login)) {
-                if(user.getPassword().equals(password))
-                    return new Response(200, "OK");
-                return new Response(401, "Incorrect password");
+                if(!user.getPassword().equals(password))
+                    throw new AuthorizationException(HttpStatus.FORBIDDEN, "Incorrect password");
+                return "TOKEN";
             }
         }
-        return new Response(404, "User not found");
+        throw new AuthorizationException(HttpStatus.NOT_FOUND, "User not found");
     }
 
-    public Response<String> register(User newUser) {
+    public void register(User newUser) throws AuthorizationException {
         for(var user : allUsers)
             if(user.getLogin().equals(newUser.getLogin()))
-                return new Response(400, "Login is already taken");
+                throw new AuthorizationException(HttpStatus.BAD_REQUEST, "Login is already taken");
         allUsers.add(newUser);
-        return new Response(200, "Registration completed!");
     }
 
 }
