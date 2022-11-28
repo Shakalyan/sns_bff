@@ -3,8 +3,8 @@ import {sendJSONQuery} from "./api_utils.js";
 const API_URLS = {
     host: "http://localhost:8080/",
     main: "main",
-    authentication: "api/authentication",
-    registration: "api/registration"
+    authentication: "api/auth",
+    registration: "api/register"
 };
 
 const authView = {
@@ -19,6 +19,8 @@ const authView = {
 const regView = {
     card: document.querySelector("#reg_div"),
     loginField: document.querySelector("#reg_login"),
+    emailField: document.querySelector("#reg_email"),
+    phoneField: document.querySelector("#reg_phone"),
     passwordField: document.querySelector("#reg_password"),
     repPasswordField: document.querySelector("#reg_rep_password"),
     errorField: document.querySelector("#reg_error"),
@@ -50,6 +52,8 @@ authView.toRegButton.addEventListener("click", function() {
 
 regView.submitButton.addEventListener("click", function() {
     let login = regView.loginField.value;
+    let email = regView.emailField.value;
+    let phone = regView.phoneField.value;
     let password = regView.passwordField.value;
     let passwordRep = regView.repPasswordField.value;
 
@@ -58,8 +62,8 @@ regView.submitButton.addEventListener("click", function() {
         return;
     }
 
-    let user = new User(login, password);
-    sendJSONQuery(API_URLS.host + API_URLS.registration, "POST", user)
+    let registrationDto = new RegistrationDto(login, password, email, phone);
+    sendJSONQuery(API_URLS.host + API_URLS.registration, "POST", registrationDto)
         .then((response) => {
             if(response.status === 200) {
                 regView.errorField.classList.remove("error");
@@ -80,8 +84,15 @@ regView.toAuthButton.addEventListener("click", function() {
     showElement(authView.card);
 });
 
-function User(login, password) {
-    this.login = login;
+function RegistrationDto(username, password, email, phone) {
+    this.username = username;
+    this.password = password;
+    this.email = email;
+    this.phone = phone;
+}
+
+function User(username, password) {
+    this.username = username;
     this.password = password;
 }
 

@@ -1,4 +1,4 @@
-package com.sns.sns_bff.controller;
+package com.sns.sns_bff.controller.view;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
