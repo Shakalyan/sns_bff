@@ -13,7 +13,6 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class SnsApiService {
 
-
     private final String baseURL = "http://backend/api";
     private final RestTemplate restTemplate = new RestTemplate();
 
@@ -34,7 +33,7 @@ public class SnsApiService {
         try {
             return restTemplate.exchange(url, method, entity, responseClass);
         } catch (Exception e) {
-            throw new SnsApiException("Something wrong with backend");
+            throw new SnsApiException(e.getMessage());
         }
     }
 
@@ -47,6 +46,5 @@ public class SnsApiService {
         headers.add("Content-Type", "application/json");
         return headers;
     }
-
 
 }
