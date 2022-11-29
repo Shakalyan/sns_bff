@@ -1,5 +1,3 @@
-
-
 const music_button = document.querySelector("#music_button");
 music_button.addEventListener("click", function() {
     console.log("Start load");
