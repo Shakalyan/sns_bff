@@ -1,5 +1,5 @@
-export const musicContainer = {
-    container: document.querySelector("#music_container"),
+export const songsContainer = {
+    container: document.querySelector("#songs_container"),
     songsList: [],
 
     playButtonOnClick: function(index) {console.log(`Index= ${index}`)},

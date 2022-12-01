@@ -33,7 +33,16 @@ public class SnsApiService {
 
     public ResponseEntity<List<Object>> findItems(String token, String type, String word) throws SnsApiException {
         String url = String.format("%s/%s/find?type=%s&word=%s", baseURL, token, type, word);
-        HttpEntity<Object> requestEntity = new HttpEntity<>(null, getBaseHeaders());
+        return sendRequest(url, HttpMethod.GET, null, Object[].class);
+    }
+
+    public ResponseEntity<List<Object>> getAlbums(String token, Long performerId) throws SnsApiException {
+        String url = String.format("%s/%s/albums?performerId=%d", baseURL, token, performerId);
+        return sendRequest(url, HttpMethod.GET, null, Object[].class);
+    }
+
+    public ResponseEntity<List<Object>> getSongsFromAlbum(String token, Long albumId) throws SnsApiException {
+        String url = String.format("%s/%s/album/songs?albumId=%d", baseURL, token, albumId);
         return sendRequest(url, HttpMethod.GET, null, Object[].class);
     }
 

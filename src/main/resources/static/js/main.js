@@ -1,5 +1,7 @@
 import {API_URLS, sendJSONQuery, sendQuery} from "./api_utils.js";
-import {musicContainer} from "./containers/music_container.js";
+import {songsContainer} from "./containers/songs_container.js";
+import {albumsContainer} from "./containers/albums_container.js";
+import {performersContainer} from "./containers/performers_container.js";
 
 let USER_TOKEN = 123;
 const music_button = document.querySelector("#music_button");
@@ -37,13 +39,43 @@ function getChosenSearchButton() {
             return key;
 }
 
+function openContainer(containerName) {
+    songsContainer.container.classList.add("hide");
+    albumsContainer.container.classList.add("hide");
+    performersContainer.container.classList.add("hide");
+    switch (containerName) {
+        case "song":
+            songsContainer.container.classList.remove("hide");
+            return;
+        case "album":
+            albumsContainer.container.classList.remove("hide");
+            return;
+        case "performer":
+            performersContainer.container.classList.remove("hide");
+            return;
+    }
+}
+
 searchBar.addEventListener("keypress", function(event) {
     if (event.key === "Enter") {
         const url = `${API_URLS.host}api/${USER_TOKEN}/find?type=${getChosenSearchButton()}&word=${searchBar.value}`;
         sendQuery(url, "GET").then((response) => {
             if (response.status === 200) {
+                openContainer(getChosenSearchButton());
+                console.log(response.body);
+                console.log(response);
                 response.json().then((json) => {
-                    musicContainer.loadSongs(json);
+                    switch (getChosenSearchButton()) {
+                        case "song":
+                            songsContainer.loadSongs(json);
+                            break;
+                        case "album":
+                            albumsContainer.loadAlbums(json);
+                            break;
+                        case "performer":
+                            performersContainer.loadPerformers(json);
+                            break;
+                    }
                 });
             }
         });
@@ -121,14 +153,35 @@ player.checkSongIndex();
 player.loadSong();
 */
 
-musicContainer.playButtonOnClick = (buttonIndex) => {
-    player.songsList = musicContainer.songsList;
+songsContainer.playButtonOnClick = (buttonIndex) => {
+    player.songsList = songsContainer.songsList;
     player.currentSongIndex = buttonIndex;
     player.checkSongIndex();
     player.loadSong();
     player.play();
 };
 
+albumsContainer.albumCardClickHandler = (albumIndex) => {
+    let albumId = albumsContainer.albumsList[albumIndex].albumId;
+    let url = `${API_URLS.host}api/${USER_TOKEN}/album/songs?albumId=${albumId}`;
+    sendQuery(url, "GET").then((response) => {
+        if (response.status == 200) {
+            response.json().then((json) => songsContainer.loadSongs(json));
+            openContainer("song");
+        }
+    });
+};
+
+performersContainer.cardClickHandler = (performerIndex) => {
+    let performerId = performersContainer.performersList[performerIndex].performerId;
+    let url = `${API_URLS.host}api/${USER_TOKEN}/albums?performerId=${performerId}`;
+    sendQuery(url, "GET").then((response) => {
+        if (response.status == 200) {
+            response.json().then((json) => albumsContainer.loadAlbums(json));
+            openContainer("album");
+        }
+    });
+};
 
 player.playButton.addEventListener("click", function() {
     if(player.isPlaying) {
