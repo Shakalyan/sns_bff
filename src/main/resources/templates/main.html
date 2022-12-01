@@ -23,44 +23,17 @@
             </div><!--
             --><div class="main_container">
                 <div class="search_panel">
-                    <input class="search_bar" type="search" placeholder="Search...">
+                    <input class="search_bar" type="search" placeholder="Search..." id="search_bar">
                     <button class="search_parameter_button search_button_chosen" type="button" id="search_button_song">Song</button>
                     <button class="search_parameter_button" type="button" id="search_button_album">Album</button>
                     <button class="search_parameter_button" type="button" id="search_button_performer">Performer</button>
                 </div><!--
-            --><div class="content_container hide" id="music_container">
+            --><div class="content_container" id="music_container">
                     <div class="music_columns">
                         <p class="column c1"></p>
                         <p class="column c2">Song</p>
                         <p class="column c2">Album</p>
                         <p class="column c2">Author</p>
-                    </div>
-                    <div class="music">
-                        <div class="music_service_buttons c1">
-                            <button class="music_button" type="submit"><i class="fa-solid fa-play"></i></button>
-                            <button class="music_button" type="submit"><i class="fa-regular fa-heart"></i></button>
-                        </div>
-                        <p class="column c2 music_text">Under the bridge</p>
-                        <p class="column c2 music_text">Blood Sugar Sex Magic</p>
-                        <p class="column c2 music_text">Red Hot Chilli Peppers</p>
-                    </div>
-                    <div class="music">
-                        <div class="music_service_buttons c1">
-                            <button class="music_button" type="submit"><i class="fa-solid fa-play"></i></button>
-                            <button class="music_button" type="submit"><i class="fa-regular fa-heart"></i></button>
-                        </div>
-                        <p class="column c2 music_text">АЗИАТСКАЯ ЭСТЕТИКА</p>
-                        <p class="column c2 music_text">АЗИАТСКАЯ ЭСТЕТИКА</p>
-                        <p class="column c2 music_text">Ulukmanapo</p>
-                    </div>
-                    <div class="music">
-                        <div class="music_service_buttons c1">
-                            <button class="music_button" type="submit"><i class="fa-solid fa-play"></i></button>
-                            <button class="music_button" type="submit"><i class="fa-regular fa-heart"></i></button>
-                        </div>
-                        <p class="column c2 music_text">Жвачка</p>
-                        <p class="column c2 music_text">Неразбериха</p>
-                        <p class="column c2 music_text">Noize MC</p>
                     </div>
                </div><!--
                --><div class="content_container hide">
@@ -103,7 +76,8 @@
                 </div>
             </div>
         </div>
-        <script src="../static/js/main.js"></script>
         <script type="module" th:src="@{/js/main.js}"></script>
+        <script type="module" th:src="@{/js/api_utils.js}"></script>
+        <script type="module" th:src="@{/js/music_container.js}"></script>
     </body>
 </html>

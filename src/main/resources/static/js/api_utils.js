@@ -1,3 +1,11 @@
+export let API_URLS = {
+    host: "http://localhost:8080/",
+    resourceHost: "http://localhost:8090/",
+    main: "main",
+    authentication: "api/auth",
+    registration: "api/register"
+};
+
 export async function sendJSONQuery(url, method, data) {
     return await fetch(url, {
         method: method,

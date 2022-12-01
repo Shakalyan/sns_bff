@@ -1,11 +1,4 @@
-import {sendJSONQuery} from "./api_utils.js";
-
-const API_URLS = {
-    host: "http://localhost:8080/",
-    main: "main",
-    authentication: "api/auth",
-    registration: "api/register"
-};
+import {API_URLS, sendJSONQuery} from "./api_utils.js";
 
 const authView = {
     card: document.querySelector("#auth_div"),

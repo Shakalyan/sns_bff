@@ -1,4 +1,9 @@
+import {API_URLS, sendJSONQuery, sendQuery} from "./api_utils.js";
+import {musicContainer} from "./containers/music_container.js";
+
+let USER_TOKEN = 123;
 const music_button = document.querySelector("#music_button");
+
 music_button.addEventListener("click", function() {
     console.log("Start load");
     let audio = new Audio("http://localhost:8080/ws.mp3");
@@ -9,20 +14,41 @@ music_button.addEventListener("click", function() {
 });
 
 
+const searchBar = document.querySelector("#search_bar");
 const searchButtonsGroup = {
     song: document.querySelector("#search_button_song"),
     album: document.querySelector("#search_button_album"),
     performer: document.querySelector("#search_button_performer"),
 };
 
-function Song(id, path, name, album, performer) {
-    this.id = id;
-    this.audioPath = `${path}/${id}.mp3`;
-    this.albumImgPath = `${path}/img.png`;
-    this.name = name;
-    this.album = album;
-    this.performer = performer;
+for(let key in searchButtonsGroup) {
+    searchButtonsGroup[key].addEventListener("click", function() {
+        for(let k in searchButtonsGroup)
+            searchButtonsGroup[k].classList.remove("search_button_chosen");
+        let index = this.id.lastIndexOf("_");
+        let chosenKey = this.id.substring(index+1);
+        searchButtonsGroup[chosenKey].classList.add("search_button_chosen");
+    });
 }
+
+function getChosenSearchButton() {
+    for(let key in searchButtonsGroup)
+        if(searchButtonsGroup[key].classList.contains("search_button_chosen"))
+            return key;
+}
+
+searchBar.addEventListener("keypress", function(event) {
+    if (event.key === "Enter") {
+        const url = `${API_URLS.host}api/${USER_TOKEN}/find?type=${getChosenSearchButton()}&word=${searchBar.value}`;
+        sendQuery(url, "GET").then((response) => {
+            if (response.status === 200) {
+                response.json().then((json) => {
+                    musicContainer.loadSongs(json);
+                });
+            }
+        });
+    }
+});
 
 const player = {
     playButton: document.querySelector("#player_play_button"),
@@ -43,10 +69,11 @@ const player = {
 
     loadSong: function() {
         let song = this.songsList[this.currentSongIndex];
-        this.audio.src = song.audioPath;
-        this.currentSongElements.albumImg.src = song.albumImgPath;
-        this.currentSongElements.nameElement.innerHTML = song.name;
-        this.currentSongElements.performerElement.innerHTML = song.performer;
+        this.audio.src = `${API_URLS.resourceHost}data/${song.performerId}/${song.albumId}/${song.songId}.mp3`;
+        console.log(this.audio.src);
+        this.currentSongElements.albumImg.src = `${API_URLS.resourceHost}data/${song.performerId}/${song.albumId}/img.png`;
+        this.currentSongElements.nameElement.innerHTML = song.songName;
+        this.currentSongElements.performerElement.innerHTML = song.performerName;
         this.audio.load();
     },
 
@@ -70,11 +97,13 @@ const player = {
     play: function() {
         this.audio.play();
         this.isPlaying = true;
+        player.playButton.innerHTML = "<i class=\"fa-sharp fa-solid fa-pause\"></i>";
     },
 
     pause: function() {
         this.audio.pause();
         this.isPlaying = false;
+        player.playButton.innerHTML = "<i class=\"fa-solid fa-play\"></i>";
     }
 
 };
@@ -92,31 +121,21 @@ player.checkSongIndex();
 player.loadSong();
 */
 
+musicContainer.playButtonOnClick = (buttonIndex) => {
+    player.songsList = musicContainer.songsList;
+    player.currentSongIndex = buttonIndex;
+    player.checkSongIndex();
+    player.loadSong();
+    player.play();
+};
 
-for(let key in searchButtonsGroup) {
-    searchButtonsGroup[key].addEventListener("click", function() {
-        for(let k in searchButtonsGroup)
-            searchButtonsGroup[k].classList.remove("search_button_chosen");
-        let index = this.id.lastIndexOf("_");
-        let chosenKey = this.id.substring(index+1);
-        searchButtonsGroup[chosenKey].classList.add("search_button_chosen");
-    });
-}
-
-function getChosenSearchButton() {
-    for(let key in searchButtonsGroup)
-        if(searchButtonsGroup[key].classList.contains("search_button_chosen"))
-            return key;
-}
 
 player.playButton.addEventListener("click", function() {
     if(player.isPlaying) {
         player.pause();
-        player.playButton.innerHTML = "<i class=\"fa-solid fa-play\"></i>";
     }
     else {
         player.play();
-        player.playButton.innerHTML = "<i class=\"fa-sharp fa-solid fa-pause\"></i>";
     }
 });
 
