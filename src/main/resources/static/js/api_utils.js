@@ -1,6 +1,6 @@
 export let API_URLS = {
     host: "http://localhost:8080/",
-    resourceHost: "http://localhost:8090/",
+    resourceHost: "http://backend:5000/",
     main: "main",
     authentication: "api/auth",
     registration: "api/register"

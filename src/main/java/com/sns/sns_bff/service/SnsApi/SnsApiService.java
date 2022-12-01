@@ -16,7 +16,7 @@ import java.util.List;
 @Service
 public class SnsApiService {
 
-    private final String baseURL = "http://localhost:8090/api";
+    private final String baseURL = "http://backend:5000/api";
     private final RestTemplate restTemplate = new RestTemplate();
 
     public ResponseEntity<String> register(RegistrationDto registrationDto) throws SnsApiException {
