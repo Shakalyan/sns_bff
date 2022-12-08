@@ -1,27 +1,31 @@
 package com.sns.sns_bff.controller;
 
 import com.sns.sns_bff.exception.SnsApiException;
-import com.sns.sns_bff.service.SnsApi.SnsApiService;
+import com.sns.sns_bff.service.SnsApi.AuthorizationRedirector;
+import com.sns.sns_bff.service.SnsApi.SearchService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
 public class FindController {
 
-    private final SnsApiService snsApiService;
+    private final SearchService searchService;
+    private final AuthorizationRedirector redirector;
 
-    @GetMapping("/api/{token}/find")
-    public ResponseEntity<List<Object>> find(@PathVariable String token,
+    @GetMapping("/api/find")
+    public ResponseEntity<List<Object>> find(@RequestHeader("Authorization") String token,
+                                             HttpServletResponse response,
                                              @RequestParam String type,
                                              @RequestParam String word) throws SnsApiException {
-        return snsApiService.findItems(token, type, word);
+        return redirector.check(searchService.findItems(token, type, word), response);
     }
 
 }

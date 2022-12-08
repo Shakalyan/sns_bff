@@ -1,4 +1,4 @@
-import {API_URLS, sendJSONQuery} from "./api_utils.js";
+import {API_URLS, sendJSONQuery, setUserToken} from "./api_utils.js";
 
 const authView = {
     card: document.querySelector("#auth_div"),
@@ -25,8 +25,10 @@ authView.submitButton.addEventListener("click", function() {
     let user = new User(authView.loginField.value, authView.passwordField.value);
     sendJSONQuery( API_URLS.host + API_URLS.authentication, "POST", user)
         .then((response) => {
-            console.log(response);
             if(response.status === 200) {
+                response.text().then((token) => {
+                    setUserToken(token);
+                });
                 authView.errorField.textContent = "";
                 window.open(API_URLS.host + API_URLS.main, "_self");
             }

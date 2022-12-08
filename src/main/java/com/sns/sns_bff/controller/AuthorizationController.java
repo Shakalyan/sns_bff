@@ -1,9 +1,9 @@
 package com.sns.sns_bff.controller;
 
-import com.sns.sns_bff.dto.AuthorizationDto;
+import com.sns.sns_bff.dto.AuthorizationRequestDto;
 import com.sns.sns_bff.dto.RegistrationDto;
 import com.sns.sns_bff.exception.SnsApiException;
-import com.sns.sns_bff.service.SnsApi.SnsApiService;
+import com.sns.sns_bff.service.SnsApi.AuthorizationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,18 +13,16 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class AuthorizationController {
 
-    private final SnsApiService snsApiService;
+    private final AuthorizationService authorizationService;
 
     @PostMapping("/auth")
-    @ResponseBody
-    public ResponseEntity<String> authorize(@RequestBody AuthorizationDto authorizationDto) throws SnsApiException {
-        return snsApiService.authorize(authorizationDto);
+    public ResponseEntity<String> authorize(@RequestBody AuthorizationRequestDto authorizationRequestDto) throws SnsApiException {
+        return authorizationService.authorize(authorizationRequestDto);
     }
 
     @PostMapping("/register")
-    @ResponseBody
     public ResponseEntity<String> register(@RequestBody RegistrationDto registrationDto) throws SnsApiException {
-        return snsApiService.register(registrationDto);
+        return authorizationService.register(registrationDto);
     }
 
 }

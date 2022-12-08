@@ -1,20 +1,11 @@
-import {API_URLS, sendJSONQuery, sendQuery} from "./api_utils.js";
+import {API_URLS, sendJSONQuery, sendQuery, sendBlobWithAuthorization,
+        sendJSONQueryWithAuthorization, sendQueryWithAuthorization, getUserToken} from "./api_utils.js";
 import {songsContainer} from "./containers/songs_container.js";
 import {albumsContainer} from "./containers/albums_container.js";
 import {performersContainer} from "./containers/performers_container.js";
+import {yourMusicContainer} from "./containers/your_music_container.js";
 
-let USER_TOKEN = 123;
-const music_button = document.querySelector("#music_button");
-
-music_button.addEventListener("click", function() {
-    console.log("Start load");
-    let audio = new Audio("http://localhost:8080/ws.mp3");
-    audio.play().catch((er) => {
-        console.log(`error ${er}`);
-    });
-    console.log("End load");
-});
-
+let USER_ID = 1;
 
 const searchBar = document.querySelector("#search_bar");
 const searchButtonsGroup = {
@@ -43,6 +34,7 @@ function openContainer(containerName) {
     songsContainer.container.classList.add("hide");
     albumsContainer.container.classList.add("hide");
     performersContainer.container.classList.add("hide");
+    yourMusicContainer.container.classList.add("hide");
     switch (containerName) {
         case "song":
             songsContainer.container.classList.remove("hide");
@@ -53,13 +45,16 @@ function openContainer(containerName) {
         case "performer":
             performersContainer.container.classList.remove("hide");
             return;
+        case "yourMusic":
+            yourMusicContainer.container.classList.remove("hide");
+            return;
     }
 }
 
 searchBar.addEventListener("keypress", function(event) {
     if (event.key === "Enter") {
-        const url = `${API_URLS.host}api/${USER_TOKEN}/find?type=${getChosenSearchButton()}&word=${searchBar.value}`;
-        sendQuery(url, "GET").then((response) => {
+        const url = `${API_URLS.host}api/find?type=${getChosenSearchButton()}&word=${searchBar.value}`;
+        sendQueryWithAuthorization(url, "GET", getUserToken()).then((response) => {
             if (response.status === 200) {
                 openContainer(getChosenSearchButton());
                 console.log(response.body);
@@ -80,6 +75,88 @@ searchBar.addEventListener("keypress", function(event) {
             }
         });
     }
+});
+
+const yourMusicButton = document.querySelector("#performer_section_music_button");
+yourMusicButton.addEventListener("click", function() {
+    const url = `${API_URLS.host}api/albums?performerId=${USER_ID}`;
+    sendQueryWithAuthorization(url, "GET", getUserToken()).then((response) => {
+        if (response.status === 200) {
+            response.json().then((json) => {
+                console.log(json);
+                yourMusicContainer.loadContainer(json);
+            });
+        }
+    });
+    openContainer("yourMusic");
+});
+
+yourMusicContainer.albumList.addEventListener("change", function() {
+    let albumId = yourMusicContainer.albumList.value;
+    console.log(albumId);
+    if (albumId == -1)
+        return;
+
+    const url = `${API_URLS.host}api/album/songs?albumId=${albumId}`;
+    sendQueryWithAuthorization(url, "GET", getUserToken()).then((response) => {
+        if (response.status === 200) {
+            response.json().then((json) => {
+                yourMusicContainer.loadSongs(json);
+            });
+        }
+    })
+});
+
+yourMusicContainer.uploadAlbumImageButton.addEventListener("click", () => {
+    yourMusicContainer.uploadAlbumImageInput.click();
+});
+
+yourMusicContainer.uploadAlbumImageInput.addEventListener("change", () => {
+    yourMusicContainer.setOutputText(`Chosen cover file: ${yourMusicContainer.uploadAlbumImageInput.files[0].name}`);
+});
+
+yourMusicContainer.addAlbumButton.addEventListener("click", () => {
+    if (yourMusicContainer.uploadAlbumImageInput.files.length === 0) {
+        yourMusicContainer.setOutputText("Choose .png file for album's cover");
+        return;
+    }
+
+    if (yourMusicContainer.albumNameField.value === "") {
+        yourMusicContainer.setOutputText("Empty album name");
+        return;
+    }
+
+    let cover = yourMusicContainer.uploadAlbumImageInput.files[0];
+    const url = `${API_URLS.host}api/albums?name=${yourMusicContainer.albumNameField.value}`;
+    sendBlobWithAuthorization(url, "POST", "cover", cover, getUserToken()).then((response) => {
+        console.log(response);
+    });
+});
+
+yourMusicContainer.uploadSongButton.addEventListener("click", () => {
+    yourMusicContainer.uploadSongInput.click();
+});
+
+yourMusicContainer.uploadSongInput.addEventListener("change", () => {
+    let songFile = yourMusicContainer.uploadSongInput.files[0];
+    yourMusicContainer.setOutputText(`Chosen song file: ${songFile.name}`);
+});
+
+yourMusicContainer.addSongButton.addEventListener("click", () => {
+    if (yourMusicContainer.uploadSongInput.files.length === 0) {
+        yourMusicContainer.setOutputText("Choose .mp3 song file");
+        return;
+    }
+    if (yourMusicContainer.songNameField.value === "") {
+        yourMusicContainer.setOutputText("Empty song name");
+        return;
+    }
+    let albumId = 10001;
+    let url = `${API_URLS.host}api/album/songs?albumId=${albumId}`;
+    let song = yourMusicContainer.uploadSongInput.files[0];
+    sendBlobWithAuthorization(url, "POST", "song", song, getUserToken()).then((response) => {
+        console.log(response);
+    });
 });
 
 const player = {
@@ -140,19 +217,6 @@ const player = {
 
 };
 
-/*
-player.songsList.push(new Song("vb",
-                             "../../../../server/noize/new_album",
-                                  "Вселенная бесконечна?", "Новый альбом", "Noize MC"));
-
-player.songsList.push(new Song("ws",
-                             "../../../../server/rhcp/stadium_arcadium",
-                                  "Wet Sand", "Stadium Arcadium", "Red Hot Chilli Peppers"));
-player.currentSongIndex = 1;
-player.checkSongIndex();
-player.loadSong();
-*/
-
 songsContainer.playButtonOnClick = (buttonIndex) => {
     player.songsList = songsContainer.songsList;
     player.currentSongIndex = buttonIndex;
@@ -163,8 +227,8 @@ songsContainer.playButtonOnClick = (buttonIndex) => {
 
 albumsContainer.albumCardClickHandler = (albumIndex) => {
     let albumId = albumsContainer.albumsList[albumIndex].albumId;
-    let url = `${API_URLS.host}api/${USER_TOKEN}/album/songs?albumId=${albumId}`;
-    sendQuery(url, "GET").then((response) => {
+    let url = `${API_URLS.host}api/album/songs?albumId=${albumId}`;
+    sendQueryWithAuthorization(url, "GET", getUserToken()).then((response) => {
         if (response.status == 200) {
             response.json().then((json) => songsContainer.loadSongs(json));
             openContainer("song");
@@ -174,8 +238,8 @@ albumsContainer.albumCardClickHandler = (albumIndex) => {
 
 performersContainer.cardClickHandler = (performerIndex) => {
     let performerId = performersContainer.performersList[performerIndex].performerId;
-    let url = `${API_URLS.host}api/${USER_TOKEN}/albums?performerId=${performerId}`;
-    sendQuery(url, "GET").then((response) => {
+    let url = `${API_URLS.host}api/albums?performerId=${performerId}`;
+    sendQueryWithAuthorization(url, "GET", getUserToken()).then((response) => {
         if (response.status == 200) {
             response.json().then((json) => albumsContainer.loadAlbums(json));
             openContainer("album");
