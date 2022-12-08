@@ -16,10 +16,10 @@ public class SnsApiUtil {
     private String backendAddress;
     private final RestTemplate restTemplate = new RestTemplate();
 
-    public ResponseEntity sendRequest(String url, HttpMethod method, HttpEntity entity, Class responseClass)
+    public ResponseEntity<String> sendRequest(String url, HttpMethod method, HttpEntity entity)
             throws SnsApiException {
         try {
-            return restTemplate.exchange(url, method, entity, responseClass);
+            return restTemplate.exchange(url, method, entity, String.class);
         } catch (Exception e) {
             throw new SnsApiException(e.getMessage());
         }

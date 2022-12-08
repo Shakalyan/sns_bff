@@ -15,6 +15,7 @@ export const performersContainer = {
 
         for (let i = 0; i < json.length; ++i) {
             let performer = json[i];
+            console.log(performer);
             this.performersList.push(performer);
 
             let performerCard = document.createElement("div");

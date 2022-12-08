@@ -1,5 +1,6 @@
 package com.sns.sns_bff.service.SnsApi;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sns.sns_bff.exception.SnsApiException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
@@ -15,10 +16,10 @@ public class SearchService {
 
     private final SnsApiUtil snsApiUtil;
 
-    public ResponseEntity<List<Object>> findItems(String token, String type, String word) throws SnsApiException {
+    public ResponseEntity<String> findItems(String token, String type, String word) throws SnsApiException {
         String url = snsApiUtil.makeUrl(String.format("/find?type=%s&word=%s", type, word));
         HttpEntity<Object> requestEntity = new HttpEntity<>(null, snsApiUtil.getHeadersWithAuthorization(token));
-        return snsApiUtil.sendRequest(url, HttpMethod.GET, requestEntity, Object[].class);
+        return snsApiUtil.sendRequest(url, HttpMethod.GET, requestEntity);
     }
 
 }

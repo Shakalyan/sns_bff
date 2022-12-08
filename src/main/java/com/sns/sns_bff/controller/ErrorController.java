@@ -12,12 +12,12 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 public class ErrorController extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(AuthorizationException.class)
-    public ResponseEntity<Object> handleAuthorizationException(AuthorizationException e) {
+    public ResponseEntity<String> handleAuthorizationException(AuthorizationException e) {
         return ResponseEntity.status(e.getStatus()).body(e.getMessage());
     }
 
     @ExceptionHandler(SnsApiException.class)
-    public ResponseEntity<Object> handleSnsApiException(SnsApiException e) {
+    public ResponseEntity<String> handleSnsApiException(SnsApiException e) {
         return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(e.getMessage());
     }
 

@@ -60,6 +60,8 @@ searchBar.addEventListener("keypress", function(event) {
                 console.log(response.body);
                 console.log(response);
                 response.json().then((json) => {
+                    json = JSON.parse(json);
+                    console.log(json);
                     switch (getChosenSearchButton()) {
                         case "song":
                             songsContainer.loadSongs(json);
@@ -83,6 +85,7 @@ yourMusicButton.addEventListener("click", function() {
     sendQueryWithAuthorization(url, "GET", getUserToken()).then((response) => {
         if (response.status === 200) {
             response.json().then((json) => {
+                json = JSON.parse(json);
                 console.log(json);
                 yourMusicContainer.loadContainer(json);
             });
@@ -101,6 +104,7 @@ yourMusicContainer.albumList.addEventListener("change", function() {
     sendQueryWithAuthorization(url, "GET", getUserToken()).then((response) => {
         if (response.status === 200) {
             response.json().then((json) => {
+                json = JSON.parse(json);
                 yourMusicContainer.loadSongs(json);
             });
         }
@@ -230,7 +234,10 @@ albumsContainer.albumCardClickHandler = (albumIndex) => {
     let url = `${API_URLS.host}api/album/songs?albumId=${albumId}`;
     sendQueryWithAuthorization(url, "GET", getUserToken()).then((response) => {
         if (response.status == 200) {
-            response.json().then((json) => songsContainer.loadSongs(json));
+            response.json().then((json) => {
+                json = JSON.parse(json);
+                songsContainer.loadSongs(json)
+            });
             openContainer("song");
         }
     });
@@ -241,7 +248,10 @@ performersContainer.cardClickHandler = (performerIndex) => {
     let url = `${API_URLS.host}api/albums?performerId=${performerId}`;
     sendQueryWithAuthorization(url, "GET", getUserToken()).then((response) => {
         if (response.status == 200) {
-            response.json().then((json) => albumsContainer.loadAlbums(json));
+            response.json().then((json) => {
+                json = JSON.parse(json);
+                albumsContainer.loadAlbums(json)
+            });
             openContainer("album");
         }
     });

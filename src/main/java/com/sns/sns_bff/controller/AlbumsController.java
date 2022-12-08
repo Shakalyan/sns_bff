@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -19,7 +18,7 @@ public class AlbumsController {
     private final AuthorizationRedirector redirector;
 
     @GetMapping("/api/albums")
-    public ResponseEntity<List<Object>> getAlbums(@RequestHeader("Authorization") String token,
+    public ResponseEntity<String> getAlbums(@RequestHeader("Authorization") String token,
                                                   HttpServletResponse response,
                                                   @RequestParam Long performerId) throws SnsApiException {
         return redirector.check(albumsService.getAlbums(token, performerId), response);
@@ -34,7 +33,7 @@ public class AlbumsController {
     }
 
     @GetMapping("/api/album/songs")
-    public ResponseEntity<List<Object>> getSongsFromAlbum(@RequestHeader("Authorization") String token,
+    public ResponseEntity<String> getSongsFromAlbum(@RequestHeader("Authorization") String token,
                                                           HttpServletResponse response,
                                                           @RequestParam Long albumId) throws SnsApiException {
         return redirector.check(albumsService.getSongsFromAlbum(token, albumId), response);

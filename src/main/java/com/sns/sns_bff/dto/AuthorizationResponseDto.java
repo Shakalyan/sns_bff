@@ -14,6 +14,10 @@ public class AuthorizationResponseDto {
 
     Long userId;
 
+    String username;
+
     String avatarUrl;
+
+    Boolean isPerformer;
 
 }

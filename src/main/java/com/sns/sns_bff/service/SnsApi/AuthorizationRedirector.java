@@ -10,7 +10,7 @@ import java.io.IOException;
 @Service
 public class AuthorizationRedirector {
 
-    public ResponseEntity check(ResponseEntity serviceResponse, HttpServletResponse httpServletResponse) {
+    public ResponseEntity<String> check(ResponseEntity<String> serviceResponse, HttpServletResponse httpServletResponse) {
         if (serviceResponse.getStatusCode() == HttpStatus.UNAUTHORIZED) {
             try {
                 httpServletResponse.sendRedirect("/");

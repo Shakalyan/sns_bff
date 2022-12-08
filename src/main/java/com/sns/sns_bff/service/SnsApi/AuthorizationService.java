@@ -18,13 +18,13 @@ public class AuthorizationService {
     public ResponseEntity<String> register(RegistrationDto registrationDto) throws SnsApiException {
         String url = snsApiUtil.makeUrl("/register");
         HttpEntity<RegistrationDto> requestEntity = new HttpEntity<>(registrationDto, snsApiUtil.getJsonHeaders());
-        return snsApiUtil.sendRequest(url, HttpMethod.POST, requestEntity, String.class);
+        return snsApiUtil.sendRequest(url, HttpMethod.POST, requestEntity);
     }
 
     public ResponseEntity<String> authorize(AuthorizationRequestDto authorizationRequestDto) throws SnsApiException {
         String url = snsApiUtil.makeUrl("/auth");
         HttpEntity<AuthorizationRequestDto> requestEntity = new HttpEntity<>(authorizationRequestDto, snsApiUtil.getJsonHeaders());
-        return snsApiUtil.sendRequest(url, HttpMethod.POST, requestEntity, String.class);
+        return snsApiUtil.sendRequest(url, HttpMethod.POST, requestEntity);
     }
 
 }

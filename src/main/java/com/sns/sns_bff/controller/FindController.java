@@ -21,7 +21,7 @@ public class FindController {
     private final AuthorizationRedirector redirector;
 
     @GetMapping("/api/find")
-    public ResponseEntity<List<Object>> find(@RequestHeader("Authorization") String token,
+    public ResponseEntity<String> find(@RequestHeader("Authorization") String token,
                                              HttpServletResponse response,
                                              @RequestParam String type,
                                              @RequestParam String word) throws SnsApiException {

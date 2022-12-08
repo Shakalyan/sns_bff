@@ -14,7 +14,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -22,16 +21,16 @@ public class AlbumsService {
 
     private final SnsApiUtil snsApiUtil;
 
-    public ResponseEntity<List<Object>> getAlbums(String token, Long performerId) throws SnsApiException {
+    public ResponseEntity<String> getAlbums(String token, Long performerId) throws SnsApiException {
         String url = snsApiUtil.makeUrl(String.format("/albums?performerId=%d", performerId));
         HttpEntity<Object> requestEntity = new HttpEntity<>(null, snsApiUtil.getHeadersWithAuthorization(token));
-        return snsApiUtil.sendRequest(url, HttpMethod.GET, requestEntity, Object[].class);
+        return snsApiUtil.sendRequest(url, HttpMethod.GET, requestEntity);
     }
 
-    public ResponseEntity<List<Object>> getSongsFromAlbum(String token, Long albumId) throws SnsApiException {
+    public ResponseEntity<String> getSongsFromAlbum(String token, Long albumId) throws SnsApiException {
         String url = snsApiUtil.makeUrl(String.format("/album/songs?albumId=%d", albumId));
         HttpEntity<Object> requestEntity = new HttpEntity<>(null, snsApiUtil.getHeadersWithAuthorization(token));
-        return snsApiUtil.sendRequest(url, HttpMethod.GET, requestEntity, Object[].class);
+        return snsApiUtil.sendRequest(url, HttpMethod.GET, requestEntity);
     }
 
     public ResponseEntity<String> addNewAlbum(String token, String name, MultipartFile cover) throws SnsApiException {
@@ -47,7 +46,7 @@ public class AlbumsService {
                     new AlbumCreationDto(name, urlToCover),
                     snsApiUtil.getJsonHeadersWithAuthorization(token)
             );
-            return snsApiUtil.sendRequest(url, HttpMethod.POST, requestEntity, String.class);
+            return snsApiUtil.sendRequest(url, HttpMethod.POST, requestEntity);
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
