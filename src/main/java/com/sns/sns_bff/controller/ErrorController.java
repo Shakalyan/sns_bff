@@ -18,7 +18,7 @@ public class ErrorController extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(SnsApiException.class)
     public ResponseEntity<String> handleSnsApiException(SnsApiException e) {
-        return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(e.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
     }
 
 }

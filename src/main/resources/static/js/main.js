@@ -21,7 +21,12 @@ accountInfoCard.accountAvatarUpload.addEventListener("change", () => {
     let file = accountInfoCard.accountAvatarUpload.files[0];
     let url = `${API_URLS.host}api/account/avatar`;
     sendBlobWithAuthorization(url, "POST", "avatar", file, userData.token).then((response) => {
-        console.log(response);
+        if (response.status === 200) {
+            response.text().then((url) => {
+                sessionStorage.setItem("avatarUrl", url);
+                accountInfoCard.accountAvatar.src = API_URLS.resourceHost + url;
+            })
+        }
     });
 });
 
@@ -84,7 +89,7 @@ searchBar.addEventListener("keypress", function(event) {
                 console.log(response.body);
                 console.log(response);
                 response.json().then((json) => {
-                    json = JSON.parse(json);
+                    //json = JSON.parse(json);
                     console.log(json);
                     switch (getChosenSearchButton()) {
                         case "song":
@@ -258,7 +263,7 @@ albumsContainer.albumCardClickHandler = (albumIndex) => {
     sendQueryWithAuthorization(url, "GET", userData.token).then((response) => {
         if (response.status == 200) {
             response.json().then((json) => {
-                json = JSON.parse(json);
+                //json = JSON.parse(json);
                 songsContainer.loadSongs(json)
             });
             openContainer("song");
@@ -272,7 +277,7 @@ performersContainer.cardClickHandler = (performerIndex) => {
     sendQueryWithAuthorization(url, "GET", userData.token).then((response) => {
         if (response.status == 200) {
             response.json().then((json) => {
-                json = JSON.parse(json);
+                //json = JSON.parse(json);
                 albumsContainer.loadAlbums(json)
             });
             openContainer("album");
