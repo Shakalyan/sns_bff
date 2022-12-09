@@ -22,14 +22,14 @@ accountInfoCard.accountAvatarUpload.addEventListener("change", () => {
     let url = `${API_URLS.host}api/account/avatar`;
     sendBlobWithAuthorization(url, "POST", "avatar", file, userData.token).then((response) => {
         console.log(response);
-    })
+    });
 });
 
 window.addEventListener("load", () => {
     userData = getUserData();
-    console.log(userData);
-})
-
+    accountInfoCard.accountName.innerHTML = userData["username"];
+    accountInfoCard.accountAvatar.src = API_URLS.resourceHost + userData["avatarUrl"];
+});
 
 const searchBar = document.querySelector("#search_bar");
 const searchButtonsGroup = {
