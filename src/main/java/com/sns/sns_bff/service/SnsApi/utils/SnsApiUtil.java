@@ -1,20 +1,24 @@
-package com.sns.sns_bff.service.SnsApi;
+package com.sns.sns_bff.service.SnsApi.utils;
 
 import com.sns.sns_bff.exception.SnsApiException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class SnsApiUtil {
 
     @Value("${backend.address}")
     private String backendAddress;
     private final RestTemplate restTemplate = new RestTemplate();
+
+    private final FileManageUtil fileManageUtil;
 
     public ResponseEntity<String> sendRequest(String url, HttpMethod method, HttpEntity entity)
             throws SnsApiException {
@@ -22,6 +26,22 @@ public class SnsApiUtil {
             return restTemplate.exchange(url, method, entity, String.class);
         } catch (Exception e) {
             throw new SnsApiException(e.getMessage());
+        }
+    }
+
+    public ResponseEntity<String> sendFile(String url, HttpMethod method, HttpEntity entity,
+                                           String token, MultipartFile file) throws SnsApiException {
+        Optional<String> urlToFile = fileManageUtil.saveFileAndGetUrl(file, token);
+        if (urlToFile.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+        url += urlToFile.get();
+        try {
+            return sendRequest(url, method, entity);
+        } catch (SnsApiException e) {
+            throw e;
+        } finally {
+            fileManageUtil.deleteFileAndDir(urlToFile.get());
         }
     }
 

@@ -7,6 +7,24 @@ import {yourMusicContainer} from "./containers/your_music_container.js";
 
 let userData = {};
 
+const accountInfoCard = {
+    accountName: document.querySelector("#account_name_field"),
+    accountAvatar: document.querySelector("#account_avatar_image"),
+    accountAvatarUpload: document.querySelector("#upload_account_avatar_input")
+};
+
+accountInfoCard.accountAvatar.addEventListener("click", () => {
+    accountInfoCard.accountAvatarUpload.click();
+});
+
+accountInfoCard.accountAvatarUpload.addEventListener("change", () => {
+    let file = accountInfoCard.accountAvatarUpload.files[0];
+    let url = `${API_URLS.host}api/account/avatar`;
+    sendBlobWithAuthorization(url, "POST", "avatar", file, userData.token).then((response) => {
+        console.log(response);
+    })
+});
+
 window.addEventListener("load", () => {
     userData = getUserData();
     console.log(userData);

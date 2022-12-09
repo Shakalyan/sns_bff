@@ -3,6 +3,7 @@ package com.sns.sns_bff.service.SnsApi;
 import com.sns.sns_bff.dto.AuthorizationRequestDto;
 import com.sns.sns_bff.dto.RegistrationDto;
 import com.sns.sns_bff.exception.SnsApiException;
+import com.sns.sns_bff.service.SnsApi.utils.SnsApiUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
