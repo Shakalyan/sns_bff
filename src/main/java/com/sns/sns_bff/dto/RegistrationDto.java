@@ -18,4 +18,6 @@ public class RegistrationDto {
 
     String phone;
 
+    Boolean isPerformer;
+
 }

@@ -61,3 +61,19 @@ export function getUserToken() {
 export function setUserToken(token) {
     sessionStorage.setItem("user_token", token);
 }
+
+let userDataKeys = ["token", "userId", "username", "avatarUrl", "isPerformer"];
+
+export function setUserData(json) {
+    userDataKeys.forEach((key, i) => {
+        sessionStorage.setItem(key, json[key]);
+    })
+}
+
+export function getUserData() {
+    let userData = {};
+    userDataKeys.forEach((key, i) => {
+        userData[key] = sessionStorage.getItem(key);
+    });
+    return userData;
+}

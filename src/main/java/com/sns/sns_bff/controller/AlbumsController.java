@@ -19,8 +19,8 @@ public class AlbumsController {
 
     @GetMapping("/api/albums")
     public ResponseEntity<String> getAlbums(@RequestHeader("Authorization") String token,
-                                                  HttpServletResponse response,
-                                                  @RequestParam Long performerId) throws SnsApiException {
+                                            HttpServletResponse response,
+                                            @RequestParam Long performerId) throws SnsApiException {
         return redirector.check(albumsService.getAlbums(token, performerId), response);
     }
 
@@ -34,8 +34,8 @@ public class AlbumsController {
 
     @GetMapping("/api/album/songs")
     public ResponseEntity<String> getSongsFromAlbum(@RequestHeader("Authorization") String token,
-                                                          HttpServletResponse response,
-                                                          @RequestParam Long albumId) throws SnsApiException {
+                                                    HttpServletResponse response,
+                                                    @RequestParam Long albumId) throws SnsApiException {
         return redirector.check(albumsService.getSongsFromAlbum(token, albumId), response);
     }
 

@@ -1,4 +1,4 @@
-import {API_URLS, sendJSONQuery, setUserToken} from "./api_utils.js";
+import {API_URLS, getUserData, sendJSONQuery, setUserData} from "./api_utils.js";
 
 const authView = {
     card: document.querySelector("#auth_div"),
@@ -16,6 +16,7 @@ const regView = {
     phoneField: document.querySelector("#reg_phone"),
     passwordField: document.querySelector("#reg_password"),
     repPasswordField: document.querySelector("#reg_rep_password"),
+    performerCheckbox: document.querySelector("#reg_performer_checkbox"),
     errorField: document.querySelector("#reg_error"),
     submitButton: document.querySelector("#reg_submit_button"),
     toAuthButton: document.querySelector("#reg_to_auth_button")
@@ -26,9 +27,11 @@ authView.submitButton.addEventListener("click", function() {
     sendJSONQuery( API_URLS.host + API_URLS.authentication, "POST", user)
         .then((response) => {
             if(response.status === 200) {
-                response.text().then((token) => {
-                    setUserToken(token);
-                });
+                response.json().then((json) => {
+                    console.log(json);
+                    setUserData(json);
+                    console.log(getUserData());
+                })
                 authView.errorField.textContent = "";
                 window.open(API_URLS.host + API_URLS.main, "_self");
             }
@@ -51,13 +54,14 @@ regView.submitButton.addEventListener("click", function() {
     let phone = regView.phoneField.value;
     let password = regView.passwordField.value;
     let passwordRep = regView.repPasswordField.value;
+    let isPerformer = regView.performerCheckbox.checked;
 
     if(password.toString() !== passwordRep.toString()) {
         regView.errorField.textContent = "Passwords do not match";
         return;
     }
 
-    let registrationDto = new RegistrationDto(login, password, email, phone);
+    let registrationDto = new RegistrationDto(login, password, email, phone, isPerformer);
     sendJSONQuery(API_URLS.host + API_URLS.registration, "POST", registrationDto)
         .then((response) => {
             if(response.status === 200) {
@@ -79,11 +83,12 @@ regView.toAuthButton.addEventListener("click", function() {
     showElement(authView.card);
 });
 
-function RegistrationDto(username, password, email, phone) {
+function RegistrationDto(username, password, email, phone, isPerformer) {
     this.username = username;
     this.password = password;
     this.email = email;
     this.phone = phone;
+    this.isPerformer = isPerformer;
 }
 
 function User(username, password) {

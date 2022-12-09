@@ -1,11 +1,17 @@
-import {API_URLS, sendJSONQuery, sendQuery, sendBlobWithAuthorization,
-        sendJSONQueryWithAuthorization, sendQueryWithAuthorization, getUserToken} from "./api_utils.js";
+import {API_URLS, sendJSONQuery, sendQuery, sendBlobWithAuthorization, getUserData,
+        sendJSONQueryWithAuthorization, sendQueryWithAuthorization} from "./api_utils.js";
 import {songsContainer} from "./containers/songs_container.js";
 import {albumsContainer} from "./containers/albums_container.js";
 import {performersContainer} from "./containers/performers_container.js";
 import {yourMusicContainer} from "./containers/your_music_container.js";
 
-let USER_ID = 1;
+let userData = {};
+
+window.addEventListener("load", () => {
+    userData = getUserData();
+    console.log(userData);
+})
+
 
 const searchBar = document.querySelector("#search_bar");
 const searchButtonsGroup = {
@@ -54,7 +60,7 @@ function openContainer(containerName) {
 searchBar.addEventListener("keypress", function(event) {
     if (event.key === "Enter") {
         const url = `${API_URLS.host}api/find?type=${getChosenSearchButton()}&word=${searchBar.value}`;
-        sendQueryWithAuthorization(url, "GET", getUserToken()).then((response) => {
+        sendQueryWithAuthorization(url, "GET", userData.token).then((response) => {
             if (response.status === 200) {
                 openContainer(getChosenSearchButton());
                 console.log(response.body);
@@ -81,11 +87,11 @@ searchBar.addEventListener("keypress", function(event) {
 
 const yourMusicButton = document.querySelector("#performer_section_music_button");
 yourMusicButton.addEventListener("click", function() {
-    const url = `${API_URLS.host}api/albums?performerId=${USER_ID}`;
-    sendQueryWithAuthorization(url, "GET", getUserToken()).then((response) => {
+    const url = `${API_URLS.host}api/albums?performerId=${userData.userId}`;
+    sendQueryWithAuthorization(url, "GET", userData.token).then((response) => {
         if (response.status === 200) {
             response.json().then((json) => {
-                json = JSON.parse(json);
+                //json = JSON.parse(json);
                 console.log(json);
                 yourMusicContainer.loadContainer(json);
             });
@@ -101,10 +107,10 @@ yourMusicContainer.albumList.addEventListener("change", function() {
         return;
 
     const url = `${API_URLS.host}api/album/songs?albumId=${albumId}`;
-    sendQueryWithAuthorization(url, "GET", getUserToken()).then((response) => {
+    sendQueryWithAuthorization(url, "GET", userData.token).then((response) => {
         if (response.status === 200) {
             response.json().then((json) => {
-                json = JSON.parse(json);
+                //json = JSON.parse(json);
                 yourMusicContainer.loadSongs(json);
             });
         }
@@ -132,7 +138,7 @@ yourMusicContainer.addAlbumButton.addEventListener("click", () => {
 
     let cover = yourMusicContainer.uploadAlbumImageInput.files[0];
     const url = `${API_URLS.host}api/albums?name=${yourMusicContainer.albumNameField.value}`;
-    sendBlobWithAuthorization(url, "POST", "cover", cover, getUserToken()).then((response) => {
+    sendBlobWithAuthorization(url, "POST", "cover", cover, userData.token).then((response) => {
         console.log(response);
     });
 });
@@ -158,7 +164,7 @@ yourMusicContainer.addSongButton.addEventListener("click", () => {
     let albumId = 10001;
     let url = `${API_URLS.host}api/album/songs?albumId=${albumId}`;
     let song = yourMusicContainer.uploadSongInput.files[0];
-    sendBlobWithAuthorization(url, "POST", "song", song, getUserToken()).then((response) => {
+    sendBlobWithAuthorization(url, "POST", "song", song, userData.token).then((response) => {
         console.log(response);
     });
 });
@@ -232,7 +238,7 @@ songsContainer.playButtonOnClick = (buttonIndex) => {
 albumsContainer.albumCardClickHandler = (albumIndex) => {
     let albumId = albumsContainer.albumsList[albumIndex].albumId;
     let url = `${API_URLS.host}api/album/songs?albumId=${albumId}`;
-    sendQueryWithAuthorization(url, "GET", getUserToken()).then((response) => {
+    sendQueryWithAuthorization(url, "GET", userData.token).then((response) => {
         if (response.status == 200) {
             response.json().then((json) => {
                 json = JSON.parse(json);
@@ -246,7 +252,7 @@ albumsContainer.albumCardClickHandler = (albumIndex) => {
 performersContainer.cardClickHandler = (performerIndex) => {
     let performerId = performersContainer.performersList[performerIndex].performerId;
     let url = `${API_URLS.host}api/albums?performerId=${performerId}`;
-    sendQueryWithAuthorization(url, "GET", getUserToken()).then((response) => {
+    sendQueryWithAuthorization(url, "GET", userData.token).then((response) => {
         if (response.status == 200) {
             response.json().then((json) => {
                 json = JSON.parse(json);
@@ -279,6 +285,7 @@ player.previousButton.addEventListener("click", function() {
 player.audio.addEventListener("loadedmetadata", function () {
     player.progressBar.max = this.duration;
 });
+
 player.audio.addEventListener("timeupdate", function() {
     player.progressBar.value = this.currentTime;
 });
