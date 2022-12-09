@@ -20,7 +20,7 @@ export const albumsContainer = {
             let albumCard = document.createElement("div");
             albumCard.classList.add("album_card");
 
-            const pathToAlbumImg = `${API_URLS.resourceHost}data/${album["performerId"]}/${album["albumId"]}/img.png`;
+            const pathToAlbumImg = API_URLS.resourceHost + album["coverUrl"];
             const followers = `Followers: ${album["followers"]}`;
             const songs = `Songs: ${album["songsCount"]}`;
             albumCard.innerHTML =

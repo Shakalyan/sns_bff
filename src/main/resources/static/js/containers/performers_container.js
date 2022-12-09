@@ -15,13 +15,13 @@ export const performersContainer = {
 
         for (let i = 0; i < json.length; ++i) {
             let performer = json[i];
-            console.log(performer);
+
             this.performersList.push(performer);
 
             let performerCard = document.createElement("div");
             performerCard.classList.add("performer_card");
 
-            let performerImgUrl = `${API_URLS.resourceHost}data/${performer["performerId"]}/img.png`;
+            let performerImgUrl = API_URLS.resourceHost + performer["avatarUrl"];
             let followers = `Followers: ${performer["followers"]}`;
             performerCard.innerHTML =
                 `<img class="performer_img" src=${performerImgUrl}>

@@ -188,9 +188,8 @@ const player = {
 
     loadSong: function() {
         let song = this.songsList[this.currentSongIndex];
-        this.audio.src = `${API_URLS.resourceHost}data/${song.performerId}/${song.albumId}/${song.songId}.mp3`;
-        console.log(this.audio.src);
-        this.currentSongElements.albumImg.src = `${API_URLS.resourceHost}data/${song.performerId}/${song.albumId}/img.png`;
+        this.audio.src = API_URLS.resourceHost + song.audioUrl;
+        this.currentSongElements.albumImg.src = API_URLS.resourceHost + song.coverUrl;
         this.currentSongElements.nameElement.innerHTML = song.songName;
         this.currentSongElements.performerElement.innerHTML = song.performerName;
         this.audio.load();
