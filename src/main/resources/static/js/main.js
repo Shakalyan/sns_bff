@@ -1,5 +1,7 @@
-import {API_URLS, sendJSONQuery, sendQuery, sendBlobWithAuthorization, getUserData,
-        sendJSONQueryWithAuthorization, sendQueryWithAuthorization} from "./api_utils.js";
+import {
+    API_URLS, sendJSONQuery, sendQuery, sendBlobWithAuthorization, getUserData,
+    sendJSONQueryWithAuthorization, sendQueryWithAuthorization, getUserToken
+} from "./api_utils.js";
 import {songsContainer} from "./containers/songs_container.js";
 import {albumsContainer} from "./containers/albums_container.js";
 import {performersContainer} from "./containers/performers_container.js";
@@ -123,8 +125,8 @@ yourMusicButton.addEventListener("click", function() {
     openContainer("yourMusic");
 });
 
-yourMusicContainer.albumList.addEventListener("change", function() {
-    let albumId = yourMusicContainer.albumList.value;
+function loadYourChosenAlbum() {
+    let albumId = yourMusicContainer.getCurrentAlbumId();
     if (albumId == -1)
         return;
 
@@ -137,7 +139,11 @@ yourMusicContainer.albumList.addEventListener("change", function() {
         } else {
             handleAPIError(response)
         }
-    })
+    });
+}
+
+yourMusicContainer.albumList.addEventListener("change", function() {
+    loadYourChosenAlbum();
 });
 
 yourMusicContainer.uploadAlbumImageButton.addEventListener("click", () => {
@@ -160,9 +166,16 @@ yourMusicContainer.addAlbumButton.addEventListener("click", () => {
     }
 
     let cover = yourMusicContainer.uploadAlbumImageInput.files[0];
-    const url = `${API_URLS.host}api/albums?name=${yourMusicContainer.albumNameField.value}`;
+    let albumName = yourMusicContainer.albumNameField.value;
+    const url = `${API_URLS.host}api/albums?albumName=${albumName}`;
     sendBlobWithAuthorization(url, "POST", "cover", cover, userData.token).then((response) => {
-        console.log(response);
+        if (response.status === 200) {
+            response.text().then((albumId) => {
+                yourMusicContainer.addAlbum(albumId, albumName);
+            });
+        } else {
+            handleAPIError(response);
+        }
     });
 });
 
@@ -184,13 +197,56 @@ yourMusicContainer.addSongButton.addEventListener("click", () => {
         yourMusicContainer.setOutputText("Empty song name");
         return;
     }
-    let albumId = 10001;
-    let url = `${API_URLS.host}api/album/songs?albumId=${albumId}`;
-    let song = yourMusicContainer.uploadSongInput.files[0];
-    sendBlobWithAuthorization(url, "POST", "song", song, userData.token).then((response) => {
-        console.log(response);
+    let albumId = yourMusicContainer.albumList.value;
+    if (albumId === -1) {
+        yourMusicContainer.setOutputText("Choose album");
+        return;
+    }
+    let songName = yourMusicContainer.songNameField.value;
+    let url = `${API_URLS.host}api/album/songs?albumId=${albumId}&songName=${songName}`;
+    let songFile = yourMusicContainer.uploadSongInput.files[0];
+    sendBlobWithAuthorization(url, "POST", "songFile", songFile, userData.token).then((response) => {
+        if (response.status === 200) {
+            response.text().then((songId) => {
+                yourMusicContainer.addSong(songId, songName);
+            });
+        } else {
+            handleAPIError(response);
+        }
     });
 });
+
+yourMusicContainer.deleteSongButton.addEventListener("click", () => {
+    if (yourMusicContainer.chosenSong == null) {
+        yourMusicContainer.setOutputText("Choose song");
+        return;
+    }
+    let songId = yourMusicContainer.chosenSong;
+    let url = `${API_URLS.host}api/album/songs?songId=${songId}`;
+    sendQueryWithAuthorization(url, "DELETE", userData.token).then((response) => {
+        if (response.status === 200) {
+            loadYourChosenAlbum();
+            yourMusicContainer.setOutputText(`Song was successfully deleted`);
+        } else {
+            handleAPIError(response);
+        }
+    });
+});
+
+yourMusicContainer.deleteAlbumButton.addEventListener("click", () => {
+    if (yourMusicContainer.getCurrentAlbumId() === -1)
+        return;
+    let albumId = yourMusicContainer.getCurrentAlbumId();
+    let url = `${API_URLS.host}api/albums?albumId=${albumId}`;
+    sendQueryWithAuthorization(url, "DELETE", userData.token).then((response) => {
+        if (response.status === 200) {
+            yourMusicContainer.albumList.value = -1;
+            yourMusicContainer.loadSongs(null);
+        } else {
+            handleAPIError(response);
+        }
+    });
+})
 
 const player = {
     playButton: document.querySelector("#player_play_button"),

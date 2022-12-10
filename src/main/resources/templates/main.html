@@ -44,7 +44,7 @@
                     <button class="search_parameter_button" type="button" id="search_button_album">Album</button>
                     <button class="search_parameter_button" type="button" id="search_button_performer">Performer</button>
                 </div><!--
-            --><div class="content_container" id="songs_container">
+            --><div class="content_container hide" id="songs_container">
                     <div class="music_columns">
                         <p class="column c1"></p>
                         <p class="column c2">Song</p>
@@ -56,11 +56,12 @@
                 </div><!--
                 --><div class="content_container hide" id="performers_container">
                 </div><!--
-                --><div class="content_container hide" id="your_music_container">
+                --><div class="content_container " id="your_music_container">
                     <div class="your_music_card">
                         <input type="file" style="display: none" id="upload_album_image_input">
                         <button class="performer_section_icon_button" id="upload_album_image_button"><i class="fa-solid fa-upload"></i></button>
                         <button class="performer_section_icon_button" id="add_album_button"><i class="fa-solid fa-plus"></i></button>
+                        <button class="performer_section_icon_button" id="delete_album_button"><i class="fa-solid fa-minus"></i></button>
                         <input class="input_field performer_card_element" id="new_album_name_field" type="text" placeholder="Album name">
                         <select class="performer_album_dropdown_list" id="performer_album_dropdown_list">
                             <option value="volvo">Новый альбом</option>
@@ -73,6 +74,7 @@
                             <input type="file" style="display: none" id="upload_song_input">
                             <button class="performer_section_icon_button" id="upload_song_button"><i class="fa-solid fa-upload"></i></button>
                             <button class="performer_section_icon_button" id="add_song_button"><i class="fa-solid fa-plus"></i></button>
+                            <button class="performer_section_icon_button" id="delete_song_button"><i class="fa-solid fa-minus"></i></button>
                             <input class="input_field performer_card_element" id="new_song_name_field" type="text" placeholder="Song name">
                             <span class="performer_section_output_field" id="performer_section_output_field"></span>
                             <div class="performer_section_table_container">

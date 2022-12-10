@@ -34,17 +34,28 @@ public class AlbumsService {
         return snsApiUtil.sendRequest(url, HttpMethod.GET, requestEntity);
     }
 
-    public ResponseEntity<String> addNewAlbum(String token, String name, MultipartFile cover) throws SnsApiException {
-        Optional<String> urlToCover = fileManageUtil.saveFileAndGetUrl(cover, token);
-        if (urlToCover.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-        String url = snsApiUtil.makeUrl("/albums");
-        HttpEntity<AlbumCreationDto> requestEntity = new HttpEntity<>(
-                new AlbumCreationDto(name, urlToCover.get()),
-                snsApiUtil.getJsonHeadersWithAuthorization(token)
-        );
-        return snsApiUtil.sendRequest(url, HttpMethod.POST, requestEntity);
+    public ResponseEntity<String> addNewAlbum(String token, String albumName, MultipartFile cover) throws SnsApiException {
+        String url = snsApiUtil.makeUrl(String.format("/albums?albumName=%s&coverUrl=", albumName));
+        HttpEntity<Object> requestEntity = new HttpEntity<>(null, snsApiUtil.getHeadersWithAuthorization(token));
+        return snsApiUtil.sendFile(url, HttpMethod.POST, requestEntity, token, cover);
+    }
+
+    public ResponseEntity<String> addSongToAlbum(String token, Long albumId, String songName, MultipartFile songFile) throws SnsApiException {
+        String url = snsApiUtil.makeUrl(String.format("/api/album/songs?albumId=%s&songName=%s&audioUrl=", albumId, songName));
+        HttpEntity<Object> requestEntity = new HttpEntity<>(null, snsApiUtil.getHeadersWithAuthorization(token));
+        return snsApiUtil.sendFile(url, HttpMethod.POST, requestEntity, token, songFile);
+    }
+
+    public ResponseEntity<String> deleteSongFromAlbum(String token, Long songId) throws SnsApiException {
+        String url = snsApiUtil.makeUrl(String.format("/api/album/songs?songId=%d", songId));
+        HttpEntity<Object> requestEntity = new HttpEntity<>(null, snsApiUtil.getHeadersWithAuthorization(token));
+        return snsApiUtil.sendRequest(url, HttpMethod.DELETE, requestEntity);
+    }
+
+    public ResponseEntity<String> deleteAlbum(String token, Long albumId) throws SnsApiException {
+        String url = snsApiUtil.makeUrl(String.format("/api/albums?albumId=%d", albumId));
+        HttpEntity<Object> requestEntity = new HttpEntity<>(null, snsApiUtil.getHeadersWithAuthorization(token));
+        return snsApiUtil.sendRequest(url, HttpMethod.DELETE, requestEntity);
     }
 
 }
