@@ -1,12 +1,12 @@
 package com.sns.sns_bff.service.SnsApi.utils;
 
 import com.sns.sns_bff.exception.SnsApiException;
-import com.sns.sns_bff.service.SnsApi.RestTemplateResponseErrorHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.ResourceAccessException;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -18,7 +18,7 @@ public class SnsApiUtil {
 
     @Value("${backend.address}")
     private String backendAddress;
-    private final RestTemplate restTemplate = new RestTemplateBuilder().errorHandler(new RestTemplateResponseErrorHandler()).build();
+    private final RestTemplate restTemplate;
 
     private final FileManageUtil fileManageUtil;
 
@@ -26,9 +26,12 @@ public class SnsApiUtil {
             throws SnsApiException {
         try {
             return restTemplate.exchange(url, method, entity, String.class);
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            throw new SnsApiException(e.getMessage());
+        } catch (RestClientException e) {
+            if (e instanceof ResourceAccessException) {
+                throw new SnsApiException(e.getMessage(), HttpStatus.GATEWAY_TIMEOUT);
+            } else {
+                throw new SnsApiException(e.getMessage(), HttpStatus.BAD_GATEWAY);
+            }
         }
     }
 

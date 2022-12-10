@@ -26,6 +26,8 @@ accountInfoCard.accountAvatarUpload.addEventListener("change", () => {
                 sessionStorage.setItem("avatarUrl", url);
                 accountInfoCard.accountAvatar.src = API_URLS.resourceHost + url;
             })
+        } else {
+            handleAPIError(response);
         }
     });
 });
@@ -86,11 +88,7 @@ searchBar.addEventListener("keypress", function(event) {
         sendQueryWithAuthorization(url, "GET", userData.token).then((response) => {
             if (response.status === 200) {
                 openContainer(getChosenSearchButton());
-                console.log(response.body);
-                console.log(response);
                 response.json().then((json) => {
-                    //json = JSON.parse(json);
-                    console.log(json);
                     switch (getChosenSearchButton()) {
                         case "song":
                             songsContainer.loadSongs(json);
@@ -103,6 +101,8 @@ searchBar.addEventListener("keypress", function(event) {
                             break;
                     }
                 });
+            } else {
+                handleAPIError(response);
             }
         });
     }
@@ -114,10 +114,10 @@ yourMusicButton.addEventListener("click", function() {
     sendQueryWithAuthorization(url, "GET", userData.token).then((response) => {
         if (response.status === 200) {
             response.json().then((json) => {
-                //json = JSON.parse(json);
-                console.log(json);
                 yourMusicContainer.loadContainer(json);
             });
+        } else {
+            handleAPIError(response)
         }
     });
     openContainer("yourMusic");
@@ -125,7 +125,6 @@ yourMusicButton.addEventListener("click", function() {
 
 yourMusicContainer.albumList.addEventListener("change", function() {
     let albumId = yourMusicContainer.albumList.value;
-    console.log(albumId);
     if (albumId == -1)
         return;
 
@@ -133,9 +132,10 @@ yourMusicContainer.albumList.addEventListener("change", function() {
     sendQueryWithAuthorization(url, "GET", userData.token).then((response) => {
         if (response.status === 200) {
             response.json().then((json) => {
-                //json = JSON.parse(json);
                 yourMusicContainer.loadSongs(json);
             });
+        } else {
+            handleAPIError(response)
         }
     })
 });
@@ -263,10 +263,11 @@ albumsContainer.albumCardClickHandler = (albumIndex) => {
     sendQueryWithAuthorization(url, "GET", userData.token).then((response) => {
         if (response.status == 200) {
             response.json().then((json) => {
-                //json = JSON.parse(json);
                 songsContainer.loadSongs(json)
             });
             openContainer("song");
+        } else {
+            handleAPIError(response);
         }
     });
 };
@@ -277,10 +278,11 @@ performersContainer.cardClickHandler = (performerIndex) => {
     sendQueryWithAuthorization(url, "GET", userData.token).then((response) => {
         if (response.status == 200) {
             response.json().then((json) => {
-                //json = JSON.parse(json);
                 albumsContainer.loadAlbums(json)
             });
             openContainer("album");
+        } else {
+            handleAPIError(response);
         }
     });
 };
@@ -311,3 +313,9 @@ player.audio.addEventListener("loadedmetadata", function () {
 player.audio.addEventListener("timeupdate", function() {
     player.progressBar.value = this.currentTime;
 });
+
+function handleAPIError(response) {
+    if (response.status === 401) {
+        window.open("/", "_self");
+    }
+}

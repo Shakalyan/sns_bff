@@ -1,4 +1,4 @@
-package com.sns.sns_bff.service.SnsApi;
+package com.sns.sns_bff.config;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.client.ClientHttpResponse;
@@ -12,11 +12,11 @@ public class RestTemplateResponseErrorHandler implements ResponseErrorHandler {
 
     @Override
     public boolean hasError(ClientHttpResponse response) throws IOException {
-        return (response.getStatusCode().series() == HttpStatus.Series.SERVER_ERROR);
+        return true;
     }
 
     @Override
     public void handleError(ClientHttpResponse response) throws IOException {
-
+        System.out.printf("[%s]: %s", response.getStatusCode(), response.getStatusText());
     }
 }

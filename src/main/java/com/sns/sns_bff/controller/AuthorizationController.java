@@ -22,6 +22,7 @@ public class AuthorizationController {
 
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody RegistrationDto registrationDto) throws SnsApiException {
+        System.out.println(registrationDto);
         return authorizationService.register(registrationDto);
     }
 
