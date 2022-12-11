@@ -7,6 +7,8 @@ export const albumsContainer = {
 
     albumCardClickHandler: function(index){},
 
+    entity: "album",
+
     loadAlbums: function(json) {
         this.albumsList = [];
         this.container.innerHTML = "";
@@ -42,5 +44,53 @@ export const albumsContainer = {
 
             this.container.appendChild(albumCard);
         }
+    },
+
+    playlistCard: {
+        nameField: null,
+        uploadCoverInput: null,
+        outputField: null
+    },
+
+    addPlaylistCardHandler: function() {},
+
+    addPlaylistCreationCard: function() {
+        let playlistCreationCard = document.createElement("div");
+        playlistCreationCard.classList.add("album_card");
+        playlistCreationCard.innerHTML += `<img class="album_img" src="../../img/playlistCreationImg.png">`;
+        playlistCreationCard.addEventListener("click", () => {
+            this.addPlaylistCardHandler();
+        });
+
+        let nameField = document.createElement("input");
+        nameField.classList.add("playlist_card_input");
+        nameField.placeholder = "Playlist name";
+        this.playlistCard.nameField = nameField;
+
+        let uploadCoverInput = document.createElement("input");
+        uploadCoverInput.type = "file";
+        uploadCoverInput.style.display = "none";
+        this.playlistCard.uploadCoverInput = uploadCoverInput;
+
+        let uploadCoverButton = document.createElement("button");
+        uploadCoverButton.classList.add("performer_section_icon_button");
+        uploadCoverButton.innerHTML = "<i class=\"fa-solid fa-upload\"></i>";
+        uploadCoverButton.addEventListener("click", () => {
+            this.playlistCard.uploadCoverInput.click();
+        });
+
+        let outputField = document.createElement("span");
+        outputField.classList.add("performer_section_output_field");
+        this.playlistCard.outputField = outputField;
+
+        playlistCreationCard.appendChild(nameField);
+        playlistCreationCard.appendChild(uploadCoverInput);
+        playlistCreationCard.appendChild(uploadCoverButton);
+        playlistCreationCard.appendChild(outputField);
+
+        this.container.appendChild(playlistCreationCard);
     }
+
+
+
 }

@@ -296,9 +296,10 @@ body {
 
 .album_card {
     width: 300px;
-    height: auto;
+    height: 450px;
     margin: 10px 0 0 10px;
     display: inline-block;
+    vertical-align: top;
 }
 
 .album_card:hover {
@@ -342,6 +343,17 @@ body {
     background-color: #6a308d;
 }
 
+.playlist_card_input {
+    border-color: #6a308d;
+    border-style: solid;
+    border-radius: 5px;
+    border-width: 1px;
+    font-size: 20px;
+    color: white;
+    margin: 15px;
+    background-color: #130e24;
+    width: calc(100% - 35px);
+}
 
 /*PERFORMERS LIST*/
 
@@ -463,6 +475,7 @@ body {
     margin: 0 0 0 5px;
     background-color: transparent;
     border-width: 0;
+    vertical-align: top;
 }
 
 .performer_section_icon_button > i {

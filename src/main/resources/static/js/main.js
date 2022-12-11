@@ -96,6 +96,7 @@ searchBar.addEventListener("keypress", function(event) {
                             songsContainer.loadSongs(json);
                             break;
                         case "album":
+                            albumsContainer.entity = "album";
                             albumsContainer.loadAlbums(json);
                             break;
                         case "performer":
@@ -314,8 +315,9 @@ songsContainer.playButtonOnClick = (buttonIndex) => {
 };
 
 albumsContainer.albumCardClickHandler = (albumIndex) => {
+    let entity = albumsContainer.entity;
     let albumId = albumsContainer.albumsList[albumIndex].albumId;
-    let url = `${API_URLS.host}api/album/songs?albumId=${albumId}`;
+    let url = `${API_URLS.host}api/${entity}/songs?${entity}Id=${albumId}`;
     sendQueryWithAuthorization(url, "GET", userData.token).then((response) => {
         if (response.status == 200) {
             response.json().then((json) => {
@@ -328,13 +330,37 @@ albumsContainer.albumCardClickHandler = (albumIndex) => {
     });
 };
 
+albumsContainer.addPlaylistCardHandler = () => {
+    if (albumsContainer.playlistCard.uploadCoverInput.files.length === 0) {
+        albumsContainer.playlistCard.outputField.innerHtml = "Choose cover file";
+        return;
+    }
+    if (albumsContainer.playlistCard.nameField.value.length === 0) {
+        albumsContainer.playlistCard.outputField.innerHtml = "Name is empty";
+        return;
+    }
+
+    let cover = albumsContainer.playlistCard.uploadCoverInput.files[0];
+    let playlistName = albumsContainer.playlistCard.nameField.value;
+    let url = `${API_URLS.host}api/playlists?playlistName=${playlistName}`;
+    sendBlobWithAuthorization(url, "POST", "cover", cover, userData.token).then((response) => {
+        if (response.status === 200) {
+            openAlbumsAndLoadPlaylists();
+        } else {
+            handleAPIError(response);
+        }
+    });
+
+};
+
 performersContainer.cardClickHandler = (performerIndex) => {
+    albumsContainer.entity = "album";
     let performerId = performersContainer.performersList[performerIndex].performerId;
     let url = `${API_URLS.host}api/albums?performerId=${performerId}`;
     sendQueryWithAuthorization(url, "GET", userData.token).then((response) => {
         if (response.status == 200) {
             response.json().then((json) => {
-                albumsContainer.loadAlbums(json)
+                albumsContainer.loadAlbums(json);
             });
             openContainer("album");
         } else {
@@ -342,6 +368,32 @@ performersContainer.cardClickHandler = (performerIndex) => {
         }
     });
 };
+
+function handleAPIError(response) {
+    if (response.status === 401) {
+        window.open("/", "_self");
+    }
+}
+
+const playlistsButton = document.querySelector("#playlists_button");
+function openAlbumsAndLoadPlaylists() {
+    albumsContainer.entity = "playlist";
+    let url = `${API_URLS.host}api/playlists?userId=${userData.userId}`;
+    sendQueryWithAuthorization(url, "GET", userData.token).then((response) => {
+        if (response.status === 200) {
+            response.json().then((json) => {
+                albumsContainer.loadAlbums(json);
+                albumsContainer.addPlaylistCreationCard();
+                openContainer("album");
+            });
+        } else {
+            handleAPIError(response);
+        }
+    });
+}
+playlistsButton.addEventListener("click", () => {
+    openAlbumsAndLoadPlaylists();
+});
 
 player.playButton.addEventListener("click", function() {
     if(player.isPlaying) {
@@ -370,8 +422,3 @@ player.audio.addEventListener("timeupdate", function() {
     player.progressBar.value = this.currentTime;
 });
 
-function handleAPIError(response) {
-    if (response.status === 401) {
-        window.open("/", "_self");
-    }
-}
