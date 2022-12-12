@@ -93,7 +93,7 @@ searchBar.addEventListener("keypress", function(event) {
                 response.json().then((json) => {
                     switch (getChosenSearchButton()) {
                         case "song":
-                            songsContainer.loadSongs(json);
+                            songsContainer.loadSongs(json, userData, null);
                             break;
                         case "album":
                             albumsContainer.entity = "album";
@@ -319,9 +319,12 @@ albumsContainer.albumCardClickHandler = (albumIndex) => {
     let albumId = albumsContainer.albumsList[albumIndex].albumId;
     let url = `${API_URLS.host}api/${entity}/songs?${entity}Id=${albumId}`;
     sendQueryWithAuthorization(url, "GET", userData.token).then((response) => {
-        if (response.status == 200) {
+        if (response.status === 200) {
             response.json().then((json) => {
-                songsContainer.loadSongs(json)
+                if (entity === "playlist")
+                    songsContainer.loadSongs(json, userData, albumId);
+                else if (entity === "album")
+                    songsContainer.loadSongs(json, userData, null);
             });
             openContainer("song");
         } else {
@@ -368,6 +371,36 @@ performersContainer.cardClickHandler = (performerIndex) => {
         }
     });
 };
+
+function addSongToPlaylist(songId, playlistId) {
+    let url = `${API_URLS.host}api/playlist/songs?playlistId=${playlistId}&songId=${songId}`;
+    sendQueryWithAuthorization(url, "POST", userData.token).then((response) => {
+        if (response.status === 200) {
+            console.log("Song was successfully added");
+        } else {
+            handleAPIError(response);
+        }
+    });
+}
+
+songsContainer.menuPlaylistOnClick = (songId, playlistId) => {
+    addSongToPlaylist(songId, playlistId);
+};
+
+songsContainer.likeButtonOnClick = (songId) => {
+    addSongToPlaylist(songId, userData.favouritePlaylistId);
+}
+
+songsContainer.removeFromPlaylistButtonClick = (songId, playlistId) => {
+    let url = `${API_URLS.host}api/playlist/songs?playlistId=${playlistId}&songId=${songId}`;
+    sendQueryWithAuthorization(url, "DELETE", userData.token).then((response) => {
+        if (response.status === 200) {
+            console.log("Song was successfully deleted");
+        } else {
+            handleAPIError(response);
+        }
+    });
+}
 
 function handleAPIError(response) {
     if (response.status === 401) {

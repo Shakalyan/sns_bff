@@ -28,9 +28,7 @@ authView.submitButton.addEventListener("click", function() {
         .then((response) => {
             if(response.status === 200) {
                 response.json().then((json) => {
-                    console.log(json);
                     setUserData(json);
-                    console.log(getUserData());
                 })
                 authView.errorField.textContent = "";
                 window.open(API_URLS.host + API_URLS.main, "_self");

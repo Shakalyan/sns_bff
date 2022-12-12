@@ -1,5 +1,6 @@
 export let API_URLS = {
     host: "http://localhost:8080/",
+    //resourceHost: "http://25.32.228.64:5000/",
     resourceHost: "http://localhost:8090/",
     main: "main",
     authentication: "api/auth",
@@ -62,18 +63,25 @@ export function setUserToken(token) {
     sessionStorage.setItem("user_token", token);
 }
 
-let userDataKeys = ["token", "userId", "username", "avatarUrl", "isPerformer"];
+let primitiveDataKeys = ["token", "userId", "username", "avatarUrl", "isPerformer", "favouritePlaylistId"];
+let jsonDataKeys = ["playlists"];
 
 export function setUserData(json) {
-    userDataKeys.forEach((key, i) => {
+    primitiveDataKeys.forEach((key, i) => {
         sessionStorage.setItem(key, json[key]);
-    })
+    });
+    jsonDataKeys.forEach((key, i) => {
+        sessionStorage.setItem(key, JSON.stringify(json[key]));
+    });
 }
 
 export function getUserData() {
     let userData = {};
-    userDataKeys.forEach((key, i) => {
+    primitiveDataKeys.forEach((key, i) => {
         userData[key] = sessionStorage.getItem(key);
+    });
+    jsonDataKeys.forEach((key, i) => {
+        userData[key] = JSON.parse(sessionStorage.getItem(key));
     });
     return userData;
 }

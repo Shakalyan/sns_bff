@@ -32,4 +32,11 @@ public class PlaylistsController {
         return playlistsService.getSongsFromPlaylist(token, playlistId);
     }
 
+    @PostMapping("/api/playlist/songs")
+    public ResponseEntity<String> addSongToPlaylist(@RequestHeader("Authorization") String token,
+                                                    @RequestParam Long playlistId,
+                                                    @RequestParam Long songId) throws SnsApiException {
+        return playlistsService.addSongToPlaylist(token, playlistId, songId);
+    }
+
 }

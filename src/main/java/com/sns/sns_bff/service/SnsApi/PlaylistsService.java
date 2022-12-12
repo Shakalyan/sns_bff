@@ -33,4 +33,10 @@ public class PlaylistsService {
         return snsApiUtil.sendRequest(url, HttpMethod.GET, requestEntity);
     }
 
+    public ResponseEntity<String> addSongToPlaylist(String token, Long playlistId, Long songId) throws SnsApiException {
+        String url = snsApiUtil.makeUrl(String.format("/playlist/songs?playlistId=%d&songId=%d", playlistId, songId));
+        HttpEntity<Object> requestEntity = new HttpEntity<>(null, snsApiUtil.getHeadersWithAuthorization(token));
+        return snsApiUtil.sendRequest(url, HttpMethod.POST, requestEntity);
+    }
+
 }

@@ -17,6 +17,7 @@ public class RestTemplateResponseErrorHandler implements ResponseErrorHandler {
 
     @Override
     public void handleError(ClientHttpResponse response) throws IOException {
-        System.out.printf("[%s]: %s", response.getStatusCode(), response.getStatusText());
+        System.out.printf("[%s]: %s\n", response.getStatusCode(), response.getStatusText());
     }
+
 }

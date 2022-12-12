@@ -551,3 +551,37 @@ body {
     padding-bottom: 50px;
     background-color: white;
 }
+
+.playlists_list_menu {
+    width: auto;
+    height: 150px;
+    background-color: #1f1934;
+    position: absolute;
+    /*top: 300px;
+    left: 400px;*/
+    overflow-y: scroll;
+}
+
+.playlists_list_menu::-webkit-scrollbar {
+    background-color: white;
+    height: 1px;
+}
+
+.playlists_list_menu::-webkit-scrollbar-track {
+    background-color: #12122b;
+}
+
+.playlists_list_menu::-webkit-scrollbar-thumb {
+    background-color: #6a308d;
+}
+
+.playlist_list_element {
+    margin: 0;
+    padding: 5px;
+    color: white;
+    background-color: #1f1934;
+}
+
+.playlist_list_element:hover {
+    background-color: #3b176f;
+}

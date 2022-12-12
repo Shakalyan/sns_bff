@@ -1,11 +1,18 @@
 export const songsContainer = {
     container: document.querySelector("#songs_container"),
+    menuContainer: document.querySelector("#menu_container"),
     songsList: [],
 
     playButtonOnClick: function(index) {console.log(`Index= ${index}`)},
-    likeButtonOnClick: function(index) {},
+    likeButtonOnClick: function(songId) {},
+    menuPlaylistOnClick: function(songId, playlistId) {console.log(`SID: ${songId}, PID: ${playlistId}`)},
+    removeFromPlaylistButtonClick: function(songId, playlistId) {},
 
-    loadSongs: function(json) {
+    mouseLeaveMenuHandler: function() {
+        this.menuContainer.innerHTML = "";
+    },
+
+    loadSongs: function(json, userData, playlistId) {
         this.songsList = [];
 
         this.container.innerHTML =
@@ -18,8 +25,12 @@ export const songsContainer = {
 
         const playButtonClickEvent = this.playButtonOnClick.bind(this);
         const likeButtonClickEvent = this.likeButtonOnClick.bind(this);
+        const clearMenuContainer = this.mouseLeaveMenuHandler.bind(this);
+        const menuPlaylistClickEvent = this.menuPlaylistOnClick.bind(this);
+        const removeFromPlaylistClickEvent = this.removeFromPlaylistButtonClick.bind(this);
 
         for (let i = 0; i < json.length; ++i) {
+            console.log("SONG!");
             let song = json[i];
             let row = document.createElement("div");
             row.classList.add("music");
@@ -32,7 +43,7 @@ export const songsContainer = {
             playButton.type = "submit";
             playButton.innerHTML = "<i class=\"fa-solid fa-play\"></i>";
             playButton.musicIndex = i;
-            playButton.addEventListener("click", function() {
+            playButton.addEventListener("click", function () {
                 playButtonClickEvent(playButton.musicIndex);
             });
 
@@ -41,21 +52,66 @@ export const songsContainer = {
             likeButton.type = "submit";
             likeButton.innerHTML = "<i class=\"fa-regular fa-heart\"></i>";
             likeButton.musicIndex = i;
-            likeButton.addEventListener("click", function() {
-                likeButtonClickEvent(likeButton.musicIndex);
+            likeButton.addEventListener("click", function () {
+                likeButtonClickEvent(song.songId);
             });
+
+            let addToPlaylistButton = document.createElement("button");
+            addToPlaylistButton.classList.add("music_button");
+            addToPlaylistButton.type = "submit";
+            addToPlaylistButton.musicIndex = i;
+            let menuContainer = this.menuContainer;
+
+            if (playlistId != null) {
+                addToPlaylistButton.innerHTML = "<i class=\"fa-solid fa-minus\"></i>";
+                addToPlaylistButton.addEventListener("click", function () {
+                    removeFromPlaylistClickEvent(song.songId, playlistId);
+                });
+            } else {
+                addToPlaylistButton.innerHTML = "<i class=\"fa-regular fa-plus\"></i>";
+                addToPlaylistButton.addEventListener("click", function () {
+                    let playlistsMenu = document.createElement("div");
+                    playlistsMenu.classList.add("playlists_list_menu");
+
+                    for (let i in userData.playlists) {
+                        let playlist = userData.playlists[i];
+                        let playlistNote = document.createElement("p");
+                        playlistNote.classList.add("playlist_list_element");
+                        playlistNote.innerHTML = playlist.albumName;
+                        playlistNote.playlistId = playlist.albumId;
+                        playlistNote.addEventListener("click", () => {
+                            menuPlaylistClickEvent(song.songId, playlistNote.playlistId);
+                            clearMenuContainer();
+                        });
+                        playlistsMenu.appendChild(playlistNote);
+                    }
+
+                    let buttonRect = addToPlaylistButton.getBoundingClientRect();
+                    playlistsMenu.style.left = buttonRect.left + "px";
+                    playlistsMenu.style.top = buttonRect.top + "px";
+                    playlistsMenu.addEventListener("mouseleave", () => {
+                        clearMenuContainer();
+                    })
+                    menuContainer.appendChild(playlistsMenu);
+                });
+            }
 
             buttons.appendChild(playButton);
             buttons.appendChild(likeButton);
+            buttons.appendChild(addToPlaylistButton);
             row.appendChild(buttons);
 
             let names = `<p class="column c2 music_text">${song["songName"]}</p>
-                            <p class="column c2 music_text">${song["albumName"]}</p>
-                            <p class="column c2 music_text">${song["performerName"]}</p>`;
+                        <p class="column c2 music_text">${song["albumName"]}</p>
+                        <p class="column c2 music_text">${song["performerName"]}</p>`;
             row.insertAdjacentHTML("beforeend", names);
 
             this.songsList.push(song);
             this.container.appendChild(row);
+
         }
     }
+
+
+
 }
