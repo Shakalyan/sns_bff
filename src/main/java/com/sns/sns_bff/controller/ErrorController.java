@@ -2,7 +2,6 @@ package com.sns.sns_bff.controller;
 
 import com.sns.sns_bff.exception.AuthorizationException;
 import com.sns.sns_bff.exception.SnsApiException;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;

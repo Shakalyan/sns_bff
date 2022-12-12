@@ -3,9 +3,9 @@ export const songsContainer = {
     menuContainer: document.querySelector("#menu_container"),
     songsList: [],
 
-    playButtonOnClick: function(index) {console.log(`Index= ${index}`)},
+    playButtonOnClick: function(index) {},
     likeButtonOnClick: function(songId) {},
-    menuPlaylistOnClick: function(songId, playlistId) {console.log(`SID: ${songId}, PID: ${playlistId}`)},
+    menuPlaylistOnClick: function(songId, playlistId) {},
     removeFromPlaylistButtonClick: function(songId, playlistId) {},
 
     mouseLeaveMenuHandler: function() {
@@ -30,7 +30,6 @@ export const songsContainer = {
         const removeFromPlaylistClickEvent = this.removeFromPlaylistButtonClick.bind(this);
 
         for (let i = 0; i < json.length; ++i) {
-            console.log("SONG!");
             let song = json[i];
             let row = document.createElement("div");
             row.classList.add("music");

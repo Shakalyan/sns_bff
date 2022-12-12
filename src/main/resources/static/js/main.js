@@ -323,7 +323,6 @@ function addSongToPlaylist(songId, playlistId) {
     let url = `${API_URLS.host}api/playlist/songs?playlistId=${playlistId}&songId=${songId}`;
     sendQueryWithAuthorization(url, "POST", userData.token).then((response) => {
         if (response.status === 200) {
-            console.log("Song was successfully added");
             return true;
         } else {
             handleAPIError(response);
@@ -344,7 +343,6 @@ songsContainer.removeFromPlaylistButtonClick = (songId, playlistId) => {
     let url = `${API_URLS.host}api/playlist/songs?playlistId=${playlistId}&songId=${songId}`;
     sendQueryWithAuthorization(url, "DELETE", userData.token).then((response) => {
         if (response.status === 200) {
-            console.log("Song was successfully deleted");
             return true;
         } else {
             handleAPIError(response);

@@ -62,7 +62,6 @@ export const yourMusicContainer = {
     loadContainer: function(json) {
         this.chosenSong = null;
         this.albumList.innerHTML = `<option value="-1"></option>`;
-        console.log(json);
         for (let i = 0; i < json.length; ++i) {
             let album = json[i];
             this.addAlbum(album["albumId"], album["albumName"]);
