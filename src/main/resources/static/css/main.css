@@ -216,6 +216,11 @@ body {
     margin: 10px 0 15px 0;
 }
 
+.duration_inscription {
+    color: white;
+    font-size: 14px;
+    position: absolute;
+}
 
 /* MUSIC LIST */
 
@@ -283,6 +288,10 @@ body {
 
 .music_button:hover {
     background-color: #6a308d;
+}
+
+.active_button > i {
+    color: blueviolet;
 }
 
 .music_text {

@@ -50,10 +50,30 @@ export const songsContainer = {
             let likeButton = document.createElement("button");
             likeButton.classList.add("music_button");
             likeButton.type = "submit";
-            likeButton.innerHTML = "<i class=\"fa-regular fa-heart\"></i>";
             likeButton.musicIndex = i;
+
+            if (song.isLiked) {
+                likeButton.innerHTML = "<i class=\"fa-solid fa-heart\"></i>";
+                likeButton.classList.add("active_button");
+            } else {
+                likeButton.innerHTML = "<i class=\"fa-regular fa-heart\"></i>";
+                likeButton.classList.remove("active_button");
+            }
+
             likeButton.addEventListener("click", function () {
-                likeButtonClickEvent(song.songId);
+                if (song.isLiked) {
+                    if (removeFromPlaylistClickEvent(song.songId, userData.favouritePlaylistId)) {
+                        song.isLiked = false;
+                        likeButton.innerHTML = "<i class=\"fa-regular fa-heart\"></i>";
+                        likeButton.classList.remove("active_button");
+                    }
+                } else {
+                    if (likeButtonClickEvent(song.songId)) {
+                        song.isLiked = true;
+                        likeButton.innerHTML = "<i class=\"fa-solid fa-heart\"></i>";
+                        likeButton.classList.add("active_button");
+                    }
+                }
             });
 
             let addToPlaylistButton = document.createElement("button");
