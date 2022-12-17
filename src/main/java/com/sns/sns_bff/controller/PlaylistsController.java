@@ -39,4 +39,17 @@ public class PlaylistsController {
         return playlistsService.addSongToPlaylist(token, playlistId, songId);
     }
 
+    @DeleteMapping("/api/playlist/songs")
+    public ResponseEntity<String> deleteSongFromPlaylist(@RequestHeader("Authorization") String token,
+                                                         @RequestParam Long playlistId,
+                                                         @RequestParam Long songId) throws SnsApiException {
+        return playlistsService.deleteSongFromPlaylist(token, playlistId, songId);
+    }
+
+    @DeleteMapping("/api/playlists")
+    public ResponseEntity<String> deletePlaylist(@RequestHeader("Authorization") String token,
+                                                 @RequestParam Long playlistId) throws SnsApiException {
+        return playlistsService.deletePlaylist(token, playlistId);
+    }
+
 }

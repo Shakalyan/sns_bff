@@ -39,4 +39,16 @@ public class PlaylistsService {
         return snsApiUtil.sendRequest(url, HttpMethod.POST, requestEntity);
     }
 
+    public ResponseEntity<String> deleteSongFromPlaylist(String token, Long playlistId, Long songId) throws SnsApiException {
+        String url = snsApiUtil.makeUrl(String.format("/playlist/songs?playlistId=%d&songId=%d", playlistId, songId));
+        HttpEntity<Object> requestEntity = new HttpEntity<>(null, snsApiUtil.getHeadersWithAuthorization(token));
+        return snsApiUtil.sendRequest(url, HttpMethod.DELETE, requestEntity);
+    }
+
+    public ResponseEntity<String> deletePlaylist(String token, Long playlistId) throws SnsApiException {
+        String url = snsApiUtil.makeUrl(String.format("/playlist?playlistId=%d", playlistId));
+        HttpEntity<Object> requestEntity = new HttpEntity<>(null, snsApiUtil.getHeadersWithAuthorization(token));
+        return snsApiUtil.sendRequest(url, HttpMethod.DELETE, requestEntity);
+    }
+
 }

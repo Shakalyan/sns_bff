@@ -96,8 +96,8 @@ export const songsContainer = {
                         let playlist = userData.playlists[i];
                         let playlistNote = document.createElement("p");
                         playlistNote.classList.add("playlist_list_element");
-                        playlistNote.innerHTML = playlist.albumName;
-                        playlistNote.playlistId = playlist.albumId;
+                        playlistNote.innerHTML = playlist.playlistName;
+                        playlistNote.playlistId = playlist.playlistId;
                         playlistNote.addEventListener("click", () => {
                             menuPlaylistClickEvent(song.songId, playlistNote.playlistId);
                             clearMenuContainer();
@@ -130,7 +130,4 @@ export const songsContainer = {
 
         }
     }
-
-
-
 }

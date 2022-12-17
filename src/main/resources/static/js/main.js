@@ -282,11 +282,11 @@ albumsContainer.albumCardClickHandler = (albumIndex) => {
 
 albumsContainer.addPlaylistCardHandler = () => {
     if (albumsContainer.playlistCard.uploadCoverInput.files.length === 0) {
-        albumsContainer.playlistCard.outputField.innerHtml = "Choose cover file";
+        albumsContainer.playlistCard.outputField.innerHTML = "Choose cover file";
         return;
     }
     if (albumsContainer.playlistCard.nameField.value.length === 0) {
-        albumsContainer.playlistCard.outputField.innerHtml = "Name is empty";
+        albumsContainer.playlistCard.outputField.innerHTML = "Name is empty";
         return;
     }
 
@@ -300,7 +300,17 @@ albumsContainer.addPlaylistCardHandler = () => {
             handleAPIError(response);
         }
     });
+};
 
+albumsContainer.deleteButtonClickHandler = (playlistId) => {
+    let url = `${API_URLS.host}api/playlists?playlistId=${playlistId}`;
+    sendQueryWithAuthorization(url, "DELETE", userData.token).then((response) => {
+        if (response.status === 200) {
+            console.log("DELETED!!!");
+        } else {
+            handleAPIError(response);
+        }
+    })
 };
 
 performersContainer.cardClickHandler = (performerIndex) => {
@@ -322,7 +332,9 @@ performersContainer.cardClickHandler = (performerIndex) => {
 function addSongToPlaylist(songId, playlistId) {
     let url = `${API_URLS.host}api/playlist/songs?playlistId=${playlistId}&songId=${songId}`;
     sendQueryWithAuthorization(url, "POST", userData.token).then((response) => {
+        console.log(response.status);
         if (response.status === 200) {
+            console.log("HUESOS HULI NE RABOTAESH");
             return true;
         } else {
             handleAPIError(response);

@@ -6,6 +6,7 @@ export const albumsContainer = {
     albumsList: [],
 
     albumCardClickHandler: function(index){},
+    deleteButtonClickHandler: function(playlistId) {},
 
     entity: "album",
 
@@ -14,6 +15,7 @@ export const albumsContainer = {
         this.container.innerHTML = "";
 
         let albumCardClickHandler = this.albumCardClickHandler.bind(this);
+        let deleteButtonClickHandler = this.deleteButtonClickHandler.bind(this);
 
         for (let i = 0; i < json.length; ++i) {
             let album = json[i];
@@ -23,23 +25,38 @@ export const albumsContainer = {
             albumCard.classList.add("album_card");
 
             const pathToAlbumImg = API_URLS.resourceHost + album["coverUrl"];
-            const followers = `Followers: ${album["followers"]}`;
             const songs = `Songs: ${album["songsCount"]}`;
             albumCard.innerHTML =
                             `<img class="album_img" src=${pathToAlbumImg}>
                              <p class="album_description">${album["albumName"]}</p>
                              <p class="album_description">${album["performerName"]}</p>
-                             <p class="album_description">${followers}</p>
                              <p class="album_description">${songs}</p>`;
 
-            let likeButton = document.createElement("button");
-            likeButton.classList.add("album_follow_button");
-            likeButton.innerHTML = "<i class=\"fa-regular fa-heart\"></i>";
-            albumCard.insertAdjacentElement("beforeend", likeButton);
+            if (this.entity === "playlist") {
+                let deleteButton = document.createElement("button");
+                deleteButton.classList.add("album_follow_button");
+
+                let icon = document.createElement("i");
+                icon.classList.add("fa-solid", "fa-minus");
+                icon.name = "delete_button";
+                deleteButton.name = "delete_button";
+                deleteButton.appendChild(icon);
+                deleteButton.addEventListener("click", function() {
+                    deleteButtonClickHandler(album.albumId);
+                });
+                albumCard.insertAdjacentElement("beforeend", deleteButton);
+            }
 
             albumCard.index = i;
-            albumCard.addEventListener("click", function() {
-                albumCardClickHandler(albumCard.index);
+            albumCard.name = "album_card";
+            albumCard.addEventListener("click", function(e) {
+                console.log(e.target.name);
+                if (e.target.name === "delete_button") {
+                    e.preventDefault();
+                    e.stopPropagation();
+                } else {
+                    albumCardClickHandler(albumCard.index);
+                }
             });
 
             this.container.appendChild(albumCard);
@@ -58,9 +75,7 @@ export const albumsContainer = {
         let playlistCreationCard = document.createElement("div");
         playlistCreationCard.classList.add("album_card");
         playlistCreationCard.innerHTML += `<img class="album_img" src="../../img/playlistCreationImg.png">`;
-        playlistCreationCard.addEventListener("click", () => {
-            this.addPlaylistCardHandler();
-        });
+
 
         let nameField = document.createElement("input");
         nameField.classList.add("playlist_card_input");
@@ -74,7 +89,12 @@ export const albumsContainer = {
 
         let uploadCoverButton = document.createElement("button");
         uploadCoverButton.classList.add("performer_section_icon_button");
-        uploadCoverButton.innerHTML = "<i class=\"fa-solid fa-upload\"></i>";
+
+        let icon = document.createElement("i");
+        icon.classList.add("fa-solid", "fa-upload");
+        icon.name = "upload_button";
+        uploadCoverButton.name = "upload_button";
+        uploadCoverButton.appendChild(icon);
         uploadCoverButton.addEventListener("click", () => {
             this.playlistCard.uploadCoverInput.click();
         });
@@ -87,6 +107,10 @@ export const albumsContainer = {
         playlistCreationCard.appendChild(uploadCoverInput);
         playlistCreationCard.appendChild(uploadCoverButton);
         playlistCreationCard.appendChild(outputField);
+
+        playlistCreationCard.addEventListener("click", () => {
+            this.addPlaylistCardHandler();
+        });
 
         this.container.appendChild(playlistCreationCard);
     }
