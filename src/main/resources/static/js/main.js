@@ -5,6 +5,7 @@ import {performersContainer} from "./containers/performers_container.js";
 import {yourMusicContainer} from "./containers/your_music_container.js";
 
 let userData = {};
+let openedContainer = "";
 
 const accountInfoCard = {
     accountName: document.querySelector("#account_name_field"),
@@ -31,8 +32,12 @@ accountInfoCard.accountAvatarUpload.addEventListener("change", () => {
     });
 });
 
+const performerSection = document.querySelector("#performer_section");
 window.addEventListener("load", () => {
     userData = getUserData();
+    if (userData.isPerformer == "false") {
+        performerSection.classList.add("hide");
+    }
     accountInfoCard.accountName.innerHTML = userData["username"];
     accountInfoCard.accountAvatar.src = API_URLS.resourceHost + userData["avatarUrl"];
     player.onload();
@@ -70,6 +75,7 @@ function openContainer(containerName) {
     albumsContainer.container.classList.add("hide");
     performersContainer.container.classList.add("hide");
     yourMusicContainer.container.classList.add("hide");
+    openedContainer = containerName;
     switch (containerName) {
         case "song":
             songsContainer.container.classList.remove("hide");
@@ -113,6 +119,22 @@ searchBar.addEventListener("keypress", function(event) {
     }
 });
 
+const favouriteMusicButton = document.querySelector("#music_button");
+favouriteMusicButton.addEventListener("click",  () => {
+    let url = `${API_URLS.host}api/playlist/songs?playlistId=${userData.favouritePlaylistId}`;
+    sendQueryWithAuthorization(url, "GET", userData.token).then((response) => {
+        if (response.status === 200) {
+            response.json().then((json) => {
+                songsContainer.loadSongs(json);
+                openContainer("song");
+            });
+        } else {
+            handleAPIError(response);
+        }
+    });
+});
+
+
 const yourMusicButton = document.querySelector("#performer_section_music_button");
 yourMusicButton.addEventListener("click", function() {
     const url = `${API_URLS.host}api/albums?performerId=${userData.userId}`;
@@ -128,9 +150,24 @@ yourMusicButton.addEventListener("click", function() {
     openContainer("yourMusic");
 });
 
+const performersButton = document.querySelector("#performers_button");
+performersButton.addEventListener("click", () => {
+     let url = `${API_URLS.host}api/performers`;
+     sendQueryWithAuthorization(url, "GET", userData.token).then((response) => {
+         if (response.status === 200) {
+            response.json().then((json) => {
+                performersContainer.loadPerformers(json);
+                openContainer("performer");
+            });
+         } else {
+             handleAPIError(response);
+         }
+     })
+});
+
 function loadYourChosenAlbum() {
     let albumId = yourMusicContainer.getCurrentAlbumId();
-    if (albumId === -1)
+    if (albumId == -1)
         return;
 
     const url = `${API_URLS.host}api/album/songs?albumId=${albumId}`;
@@ -201,7 +238,7 @@ yourMusicContainer.addSongButton.addEventListener("click", () => {
         return;
     }
     let albumId = yourMusicContainer.albumList.value;
-    if (albumId === -1) {
+    if (albumId == -1) {
         yourMusicContainer.setOutputText("Choose album");
         return;
     }
@@ -237,21 +274,24 @@ yourMusicContainer.deleteSongButton.addEventListener("click", () => {
 });
 
 yourMusicContainer.deleteAlbumButton.addEventListener("click", () => {
-    if (yourMusicContainer.getCurrentAlbumId() === -1)
+    if (yourMusicContainer.getCurrentAlbumId() == -1)
         return;
     let albumId = yourMusicContainer.getCurrentAlbumId();
     let url = `${API_URLS.host}api/albums?albumId=${albumId}`;
     sendQueryWithAuthorization(url, "DELETE", userData.token).then((response) => {
         if (response.status === 200) {
             yourMusicContainer.albumList.value = -1;
+            for (let i = 0; i < yourMusicContainer.albumList.length; ++i) {
+                if (yourMusicContainer.albumList[i].value == albumId) {
+                    yourMusicContainer.albumList.remove(i);
+                }
+            }
             yourMusicContainer.loadSongs(null);
         } else {
             handleAPIError(response);
         }
     });
-})
-
-
+});
 
 songsContainer.playButtonOnClick = (buttonIndex) => {
     player.songsList = songsContainer.songsList;
@@ -313,6 +353,19 @@ albumsContainer.deleteButtonClickHandler = (playlistId) => {
     })
 };
 
+performersContainer.likeButtonClickHandler = async (performerId, isLiked) => {
+    let url = `${API_URLS.host}api/performers?performerId=${performerId}&like=${!isLiked}`;
+    return await sendQueryWithAuthorization(url, "POST", userData.token).then((response) => {
+        if (response.status === 200) {
+            console.log("OK");
+            return true;
+        } else {
+            handleAPIError(response);
+            return true;
+        }
+    });
+};
+
 performersContainer.cardClickHandler = (performerIndex) => {
     albumsContainer.entity = "album";
     let performerId = performersContainer.performersList[performerIndex].performerId;
@@ -329,12 +382,11 @@ performersContainer.cardClickHandler = (performerIndex) => {
     });
 };
 
-function addSongToPlaylist(songId, playlistId) {
+async function addSongToPlaylist(songId, playlistId) {
     let url = `${API_URLS.host}api/playlist/songs?playlistId=${playlistId}&songId=${songId}`;
-    sendQueryWithAuthorization(url, "POST", userData.token).then((response) => {
+    return await sendQueryWithAuthorization(url, "POST", userData.token).then((response) => {
         console.log(response.status);
         if (response.status === 200) {
-            console.log("HUESOS HULI NE RABOTAESH");
             return true;
         } else {
             handleAPIError(response);
@@ -344,17 +396,28 @@ function addSongToPlaylist(songId, playlistId) {
 }
 
 songsContainer.menuPlaylistOnClick = (songId, playlistId) => {
-    return addSongToPlaylist(songId, playlistId);
+    addSongToPlaylist(songId, playlistId);
 };
 
-songsContainer.likeButtonOnClick = (songId) => {
-    return addSongToPlaylist(songId, userData.favouritePlaylistId);
+songsContainer.likeButtonOnClick = async (songId) => {
+    return await addSongToPlaylist(songId, userData.favouritePlaylistId).then((result) => {
+        if (result) {
+            player.likeButton.icon.classList.remove("fa-regular");
+            player.likeButton.icon.classList.add("fa-solid");
+            player.likeButton.classList.add("active_button");
+            return true;
+        }
+        return false;
+    });
 }
 
-songsContainer.removeFromPlaylistButtonClick = (songId, playlistId) => {
+songsContainer.removeFromPlaylistButtonClick = async (songId, playlistId) => {
     let url = `${API_URLS.host}api/playlist/songs?playlistId=${playlistId}&songId=${songId}`;
-    sendQueryWithAuthorization(url, "DELETE", userData.token).then((response) => {
+    return await sendQueryWithAuthorization(url, "DELETE", userData.token).then((response) => {
         if (response.status === 200) {
+            player.likeButton.icon.classList.remove("fa-solid");
+            player.likeButton.icon.classList.add("fa-regular");
+            player.likeButton.classList.remove("active_button");
             return true;
         } else {
             handleAPIError(response);
@@ -412,6 +475,10 @@ const player = {
         this.setDurationInscriptionsPositions();
         this.progressBar.value = 0;
         this.currentSongElements.albumImg.classList.add("hide");
+        let icon = document.createElement("i");
+        icon.classList.add("fa-regular", "fa-heart");
+        this.likeButton.appendChild(icon);
+        this.likeButton.icon = icon;
     },
 
     loadSong: function() {
@@ -424,10 +491,12 @@ const player = {
         this.currentSongElements.performerElement.innerHTML = song.performerName;
         this.audio.load();
         if (song.isLiked) {
-            this.likeButton.innerHTML = "<i class=\"fa-solid fa-heart\"></i>";
+            this.likeButton.icon.classList.remove("fa-regular");
+            this.likeButton.icon.classList.add("fa-solid");
             this.likeButton.classList.add("active_button");
         } else {
-            this.likeButton.innerHTML = "<i class=\"fa-regular fa-heart\"></i>";
+            this.likeButton.icon.classList.remove("fa-solid");
+            this.likeButton.icon.classList.add("fa-regular");
             this.likeButton.classList.remove("active_button");
         }
     },
@@ -527,17 +596,25 @@ player.progressBar.addEventListener("click", (event) => {
 player.likeButton.addEventListener("click", () => {
     let song = player.songsList[player.currentSongIndex];
     if (song.isLiked) {
-        if (songsContainer.removeFromPlaylistButtonClick(song.songId, userData.favouritePlaylistId)) {
-            song.isLiked = false;
-            player.likeButton.innerHTML = "<i class=\"fa-regular fa-heart\"></i>";
-            player.likeButton.classList.remove("active_button");
-        }
+        songsContainer.removeFromPlaylistButtonClick(song.songId, userData.favouritePlaylistId).then((result) => {
+            if (result) {
+                song.isLiked = false;
+                player.likeButton.icon.classList.remove("fa-solid");
+                player.likeButton.icon.classList.add("fa-regular");
+                player.likeButton.classList.remove("active_button");
+                songsContainer.switchLikeSongButton(song.songId, false);
+            }
+        });
     } else {
-        if (songsContainer.likeButtonOnClick(song.songId)) {
-            song.isLiked = true;
-            player.likeButton.innerHTML = "<i class=\"fa-solid fa-heart\"></i>";
-            player.likeButton.classList.add("active_button");
-        }
+        songsContainer.likeButtonOnClick(song.songId).then((result) => {
+            if (result) {
+                song.isLiked = true;
+                player.likeButton.icon.classList.remove("fa-regular");
+                player.likeButton.icon.classList.add("fa-solid");
+                player.likeButton.classList.add("active_button");
+                songsContainer.switchLikeSongButton(song.songId, true);
+            }
+        });
     }
 });
 

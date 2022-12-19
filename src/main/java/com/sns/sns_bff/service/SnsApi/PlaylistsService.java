@@ -46,7 +46,7 @@ public class PlaylistsService {
     }
 
     public ResponseEntity<String> deletePlaylist(String token, Long playlistId) throws SnsApiException {
-        String url = snsApiUtil.makeUrl(String.format("/playlist?playlistId=%d", playlistId));
+        String url = snsApiUtil.makeUrl(String.format("/playlists?playlistId=%d", playlistId));
         HttpEntity<Object> requestEntity = new HttpEntity<>(null, snsApiUtil.getHeadersWithAuthorization(token));
         return snsApiUtil.sendRequest(url, HttpMethod.DELETE, requestEntity);
     }

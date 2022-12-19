@@ -1,4 +1,5 @@
 import {API_URLS} from "../api_utils.js";
+import {getUserData} from "../api_utils.js";
 
 export const albumsContainer = {
     container: document.querySelector("#albums_container"),
@@ -13,6 +14,8 @@ export const albumsContainer = {
     loadAlbums: function(json) {
         this.albumsList = [];
         this.container.innerHTML = "";
+
+        let favouritePlaylistId = getUserData().favouritePlaylistId;
 
         let albumCardClickHandler = this.albumCardClickHandler.bind(this);
         let deleteButtonClickHandler = this.deleteButtonClickHandler.bind(this);
@@ -32,10 +35,10 @@ export const albumsContainer = {
                              <p class="album_description">${album["performerName"]}</p>
                              <p class="album_description">${songs}</p>`;
 
-            if (this.entity === "playlist") {
+            if (this.entity === "playlist" && album.albumId != favouritePlaylistId) {
+                console.log(this.entity + " " + album.albumId + " " + favouritePlaylistId);
                 let deleteButton = document.createElement("button");
                 deleteButton.classList.add("album_follow_button");
-
                 let icon = document.createElement("i");
                 icon.classList.add("fa-solid", "fa-minus");
                 icon.name = "delete_button";

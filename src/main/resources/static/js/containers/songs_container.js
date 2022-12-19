@@ -12,6 +12,27 @@ export const songsContainer = {
         this.menuContainer.innerHTML = "";
     },
 
+    switchLikeSongButton: function(songId, like) {
+        for (let i = 0; i < this.songsList.length; ++i) {
+            if (this.songsList[i].songId === songId) {
+                console.log(this.songsList[i].songId);
+                let likeButton = this.songsList[i].likeButton;
+                let icon = this.songsList[i].likeButton.icon;
+                console.log(likeButton);
+                console.log(icon);
+                if (like) {
+                    icon.classList.remove("fa-regular");
+                    icon.classList.add("fa-solid");
+                    likeButton.classList.add("active_button");
+                } else {
+                    icon.classList.remove("fa-solid");
+                    icon.classList.add("fa-regular");
+                    likeButton.classList.remove("active_button");
+                }
+            }
+        }
+    },
+
     loadSongs: function(json, userData, playlistId) {
         this.songsList = [];
 
@@ -52,28 +73,42 @@ export const songsContainer = {
             likeButton.musicIndex = i;
 
             if (song.isLiked) {
-                likeButton.innerHTML = "<i class=\"fa-solid fa-heart\"></i>";
+                let icon = document.createElement("i");
+                icon.classList.add("fa-solid", "fa-heart");
+                likeButton.appendChild(icon);
+                likeButton.icon = icon;
                 likeButton.classList.add("active_button");
             } else {
-                likeButton.innerHTML = "<i class=\"fa-regular fa-heart\"></i>";
+                let icon = document.createElement("i");
+                icon.classList.add("fa-regular", "fa-heart");
+                likeButton.appendChild(icon);
+                likeButton.icon = icon;
                 likeButton.classList.remove("active_button");
             }
 
             likeButton.addEventListener("click", function () {
                 if (song.isLiked) {
-                    if (removeFromPlaylistClickEvent(song.songId, userData.favouritePlaylistId)) {
-                        song.isLiked = false;
-                        likeButton.innerHTML = "<i class=\"fa-regular fa-heart\"></i>";
-                        likeButton.classList.remove("active_button");
-                    }
+                    removeFromPlaylistClickEvent(song.songId, userData.favouritePlaylistId).then((result) => {
+                        if (result) {
+                            song.isLiked = false;
+                            likeButton.icon.classList.remove("fa-solid");
+                            likeButton.icon.classList.add("fa-regular");
+                            likeButton.classList.remove("active_button");
+                        }
+                    });
                 } else {
-                    if (likeButtonClickEvent(song.songId)) {
-                        song.isLiked = true;
-                        likeButton.innerHTML = "<i class=\"fa-solid fa-heart\"></i>";
-                        likeButton.classList.add("active_button");
-                    }
+                    likeButtonClickEvent(song.songId).then((result) => {
+                        if (result) {
+                            song.isLiked = true;
+                            likeButton.icon.classList.remove("fa-regular");
+                            likeButton.icon.classList.add("fa-solid");
+                            likeButton.classList.add("active_button");
+                        }
+                    });
                 }
             });
+
+            song.likeButton = likeButton;
 
             let addToPlaylistButton = document.createElement("button");
             addToPlaylistButton.classList.add("music_button");
