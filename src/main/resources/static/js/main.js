@@ -125,7 +125,7 @@ favouriteMusicButton.addEventListener("click",  () => {
     sendQueryWithAuthorization(url, "GET", userData.token).then((response) => {
         if (response.status === 200) {
             response.json().then((json) => {
-                songsContainer.loadSongs(json);
+                songsContainer.loadSongs(json, userData, null);
                 openContainer("song");
             });
         } else {
@@ -335,6 +335,12 @@ albumsContainer.addPlaylistCardHandler = () => {
     let url = `${API_URLS.host}api/playlists?playlistName=${playlistName}`;
     sendBlobWithAuthorization(url, "POST", "cover", cover, userData.token).then((response) => {
         if (response.status === 200) {
+            response.text().then((text) => {
+                userData.playlists.push({
+                    playlistId: parseInt(text, 10),
+                    playlistName: playlistName
+                });
+            });
             openAlbumsAndLoadPlaylists();
         } else {
             handleAPIError(response);
@@ -346,7 +352,6 @@ albumsContainer.deleteButtonClickHandler = (playlistId) => {
     let url = `${API_URLS.host}api/playlists?playlistId=${playlistId}`;
     sendQueryWithAuthorization(url, "DELETE", userData.token).then((response) => {
         if (response.status === 200) {
-            console.log("DELETED!!!");
         } else {
             handleAPIError(response);
         }
@@ -357,7 +362,6 @@ performersContainer.likeButtonClickHandler = async (performerId, isLiked) => {
     let url = `${API_URLS.host}api/performers?performerId=${performerId}&like=${!isLiked}`;
     return await sendQueryWithAuthorization(url, "POST", userData.token).then((response) => {
         if (response.status === 200) {
-            console.log("OK");
             return true;
         } else {
             handleAPIError(response);
@@ -385,7 +389,6 @@ performersContainer.cardClickHandler = (performerIndex) => {
 async function addSongToPlaylist(songId, playlistId) {
     let url = `${API_URLS.host}api/playlist/songs?playlistId=${playlistId}&songId=${songId}`;
     return await sendQueryWithAuthorization(url, "POST", userData.token).then((response) => {
-        console.log(response.status);
         if (response.status === 200) {
             return true;
         } else {

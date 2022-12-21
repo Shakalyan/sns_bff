@@ -15,11 +15,8 @@ export const songsContainer = {
     switchLikeSongButton: function(songId, like) {
         for (let i = 0; i < this.songsList.length; ++i) {
             if (this.songsList[i].songId === songId) {
-                console.log(this.songsList[i].songId);
                 let likeButton = this.songsList[i].likeButton;
                 let icon = this.songsList[i].likeButton.icon;
-                console.log(likeButton);
-                console.log(icon);
                 if (like) {
                     icon.classList.remove("fa-regular");
                     icon.classList.add("fa-solid");

@@ -43,13 +43,9 @@ export const performersContainer = {
             likeButton.name = "like_button";
             likeButton.appendChild(icon);
 
-            //performer.isLiked = false; //DELETE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
             likeButton.addEventListener("click", () => {
-                console.log(performer.isLiked);
                 likeButtonClickHandler(performer.performerId, performer.isLiked).then((result) => {
                     if (result) {
-                        console.log(performer.isLiked);
                         if (performer.isLiked) {
                             performer.isLiked = false;
                             icon.classList.remove("fa-solid");

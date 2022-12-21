@@ -36,7 +36,6 @@ export const albumsContainer = {
                              <p class="album_description">${songs}</p>`;
 
             if (this.entity === "playlist" && album.albumId != favouritePlaylistId) {
-                console.log(this.entity + " " + album.albumId + " " + favouritePlaylistId);
                 let deleteButton = document.createElement("button");
                 deleteButton.classList.add("album_follow_button");
                 let icon = document.createElement("i");
@@ -53,7 +52,6 @@ export const albumsContainer = {
             albumCard.index = i;
             albumCard.name = "album_card";
             albumCard.addEventListener("click", function(e) {
-                console.log(e.target.name);
                 if (e.target.name === "delete_button") {
                     e.preventDefault();
                     e.stopPropagation();
